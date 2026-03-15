@@ -1,0 +1,132 @@
+/*---------------------------- CARTE PRINCIPALE----------------------------*/
+.card {
+    width: 95%;
+
+    background-color: purple;
+    border: 1px solid;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, .08);
+}
+
+/* ─── LIGNE DU HAUT : image + (titre / liste) ── */
+.card__top {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+}
+
+
+
+/* IMAGE */
+.card__image {
+
+    border-radius: 10px;
+
+
+}
+
+.card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+
+/* COLONNE DROITE : titre + liste */
+.card__right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* TITRE */
+.card__title {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card__title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    text-align: center;
+}
+
+/* LISTE */
+.card__list {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+}
+
+.card__list h3 {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.card__list ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.card__list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #faf8f4;
+    border: 1px solid var(--border);
+    transition: background .2s, border-color .2s;
+}
+
+.card__list li:hover {
+    background: #fdf0ea;
+    border-color: rgba(181, 69, 27, .3);
+}
+
+.card__list li .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+}
+
+/* ─── LIGNE DU BAS : description ─────────────── */
+.card__desc {
+
+    border-radius: 10px;
+    padding: 20px 24px;
+    background-color: red;
+    overflow: scroll;
+    overflow-wrap: break-word;
+}
+
+.card__desc h3 {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.card__desc p {
+    font-size: 14px;
+
+    color: #555;
+    font-weight: lighter;
+}
