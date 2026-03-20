@@ -1,40 +1,59 @@
+DROP TABLE IF EXISTS recetteIngredient;
+DROP TABLE IF EXISTS recetteTag;
+DROP TABLE IF EXISTS recette;
+DROP TABLE IF EXISTS ingredient;
+DROP TABLE IF EXISTS tag;
+
 CREATE TABLE recette (
-    recetteID int PRIMARY KEY,
+    recetteID int PRIMARY KEY AUTO_INCREMENT,
     nom varchar(255),
-    texte varchar(255)
+    texte varchar(255),
+    photo varchar(255)
 );
 
 CREATE TABLE ingredient (
-    ingredientID int PRIMARY KEY,
-    nom varchar(255)
+    ingredientID int PRIMARY KEY AUTO_INCREMENT,
+    nom varchar(255),
+    photo varchar(255)
 );
 
 CREATE TABLE tag (
-    tagID int PRIMARY KEY,
+    tagID int PRIMARY KEY AUTO_INCREMENT,
     nom varchar(255)
 );
 
 CREATE TABLE recetteIngredient (
 
-    CONSTRAINT fk_recette
+    recetteID int,
     FOREIGN KEY (recetteID)
     REFERENCES recette(recetteID),
 
-    CONSTRAINT fk_recette
+    ingredientID int,
     FOREIGN KEY (ingredientID)
-    REFERENCES recette(recetteID)
+    REFERENCES ingredient(ingredientID)
 
 );
 
 CREATE TABLE recetteTag (
 
-    CONSTRAINT fk_recette
+    recetteID int,
     FOREIGN KEY (recetteID)
     REFERENCES recette(recetteID),
 
-    CONSTRAINT fk_tag
-    FOREIGN KEY (tagtID)
+    tagID int,
+    FOREIGN KEY (tagID)
     REFERENCES tag(tagID)
-    
+
 );
+
+
+
+
+
+
+/*
+ALTER TABLE recette
+UPDATE recetteID int NOT NULL AUTO_INCREMENT;
+*/
+
 
