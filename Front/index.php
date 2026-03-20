@@ -17,15 +17,16 @@ error_reporting(E_ALL);
 <body>
 
     <?php
-require_once "header.php";
-?>
+    require_once "header.php";
+    ?>
 
-    <div id="searchBar"><input class="inputText" type="text" placeholder="Tartiflette"></div>
+    <div id="searchBar"><input class="inputText" type="text" placeholder="Tartiflette"> <button
+            id="btnSearch">Recherche</button></div>
     <div id="mainWrapper">
 
         <div id="filterContent">
             <div><label for="Ingredient">Ingredient</label>
-                <select name="cars" id="cars">
+                <select name="Ing" id="ingredientSelector">
                     <option value="volvo">Volvo</option>
                     <option value="saab">Saab</option>
                     <option value="mercedes">Mercedes</option>
@@ -34,7 +35,7 @@ require_once "header.php";
                 <button id="AddIngredient" class="btn">Add Ingredient</button>
             </div>
             <div><label for="Tag">Tag</label>
-                <select name="cars" id="cars">
+                <select name="tagSelection" id="tagSelection">
                     <option value="volvo">Volvo</option>
                     <option value="saab">Saab</option>
                     <option value="mercedes">Mercedes</option>
@@ -46,7 +47,12 @@ require_once "header.php";
         </div>
         <div class="mainContentWrapper">
             <div class="DisplayFilter">
-                <p>tag:</p>
+                <div>Tags:
+                    <div id="filterDisplayTag"></div>
+                </div>
+                <div>Ingrédients:
+                    <div id="filterDisplayIng"></div>
+                </div>
             </div>
             <div class="showResult">
 
@@ -63,8 +69,8 @@ require_once "header.php";
     </div>
 
     <?php
-require_once "footer.php";
-?>
+    require_once "footer.php";
+    ?>
 
 </body>
 <script src="script/filter.js"></script>
