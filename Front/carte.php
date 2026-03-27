@@ -14,6 +14,8 @@
 
             <div class="card__title">
                 <h2>Nom recette</h2>
+                <button>Modifier</button>
+                <button>Supprimer</button>
             </div>
 
             <div class="card__list">
