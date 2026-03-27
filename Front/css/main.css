@@ -83,10 +83,21 @@ header a.hover {
 }
 
 /* Wrapper Filter */
-#filterContent {
+#filterContent {}
+
+
+/* conteneur de gauche */
+#leftContainer {
     width: 20%;
     border: solid;
     height: 100%;
+    background-color: chartreuse;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    height: 100%;
+    /* ou une hauteur fixe, ex: 400px */
 }
 
 /* Wrapper Diplay tag */
