@@ -5,11 +5,13 @@
     </div>
     <div class="title">Myrmidons</div>
     <div class="LogIn">
-        <form action="Mettre le liens">
+        <form id="loginUser" action="Mettre le liens" methode="POST">
             <input type="text" name="username" id="username" placeholder="Username">
             <input type="text" name="password" id="password" placeholder="Password">
             <button type="submit">Login</button>
         </form>
+        <div id="errorForm" class="errorInput"></div>
     </div>
 
 </header>
+<script src="/script/login.js"></script>
