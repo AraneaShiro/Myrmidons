@@ -2,12 +2,12 @@
 
 class SQLfct {
 
-    private $db_name = "myrmidons";
+    private $db_name = "myrmidonsBDD";
     private $db_host = "127.0.0.1";
     private $db_port = "3306";
 
     private $db_user = "root";
-    private $db_pwd = "root";
+    private $db_pwd = "";
 
     private $pdo;
 
@@ -30,6 +30,12 @@ public function __construct() {
     * FONCTIONS POUR RECHERCHER DANS LA BDD *
 =================================================
 */
+
+/*
+------------------------
+   * RECHERCHE ALL *
+------------------------
+ */
 
 /**
  * fonction qui donne toutes les recettes existantes
@@ -88,6 +94,12 @@ function rechercherTagAll() {
 }
 }
 
+/*
+-------------------------
+ * RECHERCHE SPECIFIQUE *
+-------------------------
+ */
+
 /**
  * fonction qui recherche les mots qui ressemble à celui donner
  */
@@ -113,16 +125,188 @@ function rechercherRecettes($motRecherche) {
 }
 }
 
+/**
+ * fonction qui recherche les recettes contenants le tag
+ */
+function rechercherRecettesParTag($tagID) {
+
+    try {
+    $query =    "SELECT * FROM recette
+                JOIN recetteTag ON recetteTag.recetteID = recette.recetteID
+                WHERE recetteTag.tagID = :tagID
+                ORDER BY recette.nom DESC" ;
+
+    $statement = $this->pdo->prepare($query);
+
+    // remplacement des valeurs avec les parametres
+    $statement->bindValue(':tagID',   $tagID) ;
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+
+    } catch(\Exception $ex){
+        die("Erreur rechercherRecettesParTag : " . $ex->getMessage()) ;
+}
+}
+
+/**
+ * fonction qui recherche les recettes contenants l'ingredient
+ */
+function rechercherRecettesParIngredient($ingredientID) {
+
+    try {
+    $query =    "SELECT * FROM recette
+                JOIN recetteIngredient ON recetteIngredient.recetteID = recette.recetteID
+                WHERE recetteIngredient.ingredientID = :ingredientID
+                ORDER BY recette.nom DESC" ;
+
+    $statement = $this->pdo->prepare($query);
+
+    // remplacement des valeurs avec les parametres
+    $statement->bindValue(':ingredientID',   $ingredientID) ;
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+
+    } catch(\Exception $ex){
+        die("Erreur rechercherRecettesParIngredient : " . $ex->getMessage()) ;
+}
+}
+
+/**
+ * donne tous les ingrédients qui sont dans la recette
+ */
+function rechercherIngredientsDansRecette($recetteID) {
+    try{
+    $query =    "SELECT * FROM ingredient
+                JOIN recetteIngredient ON recetteIngredient.ingredientID = ingredient.ingredientID
+                WHERE recetteIngredient.recetteID = :recetteID
+                ORDER BY ingredient.nom DESC" ;
+      
+    $statement = $this->pdo->prepare($query);
+
+    // remplacement des valeurs avec les parametres
+    $statement->bindValue(':recetteID',   $recetteID) ;
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+
+} catch(\Exception $ex){
+        die("Erreur rechercherRecettesParIngredient : " . $ex->getMessage()) ;
+}
+}
+
+/**
+ * donne tous les tags qui sont dans la recette
+ */
+function rechercherTagsDansRecette($recetteID) {
+    try{
+    $query =    "SELECT * FROM tag
+                JOIN recetteTag ON recetteTag.tagID = tag.tagID
+                WHERE recetteTag.recetteID = :recetteID
+                ORDER BY tag.nom DESC" ;
+      
+    $statement = $this->pdo->prepare($query);
+
+    // remplacement des valeurs avec les parametres
+    $statement->bindValue(':recetteID',   $recetteID) ;
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+    
+} catch(\Exception $ex){
+        die("Erreur rechercherTagsParIngredient : " . $ex->getMessage()) ;
+}
+}
+
+/*
+--------------------
+  * RECHERCHE ID *
+--------------------
+ */
+
+/**
+ *  fonction qui donne une recette en utilisant son ID
+ */ 
+function rechercherRecetteParID($recetteID) {
+
+    try{
+        $query =  "SELECT * FROM recette
+                WHERE recetteID = :recetteID";
+
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':recetteID', $recetteID) ;
+
+        $statement->execute();
+
+        return $statement->fetch();
+
+} catch(\Exception $ex){
+        die("Erreur rechercherRecetteParID : " . $ex->getMessage()) ;
+}
+
+}
+
+/**
+ * fonction qui donne un ingredient en utilisant son ID
+ */ 
+function rechercherIngredientParID($ingredientID) {
+
+    try{
+        $query = "SELECT * FROM ingredient
+                WHERE ingredientID = :ingredientID";
+
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':ingredientID', $ingredientID);
+
+        $statement->execute();
+
+        return $statement->fetch();
+
+    } catch(\Exception $ex){
+        die("Erreur rechercherIngredientParID : " . $ex->getMessage());
+    }
+}
+
+/**
+ * fonction qui donne un tag en utilisant son ID
+ */ 
+function rechercherTagParID($tagID) {
+
+    try{
+        $query = "SELECT * FROM tag
+                WHERE tagID = :tagID";
+
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':tagID', $tagID);
+
+        $statement->execute();
+
+        return $statement->fetch();
+
+    } catch(\Exception $ex){
+        die("Erreur rechercherTagParID : " . $ex->getMessage());
+    }
+}
+
+
 /* 
-=======================================================
- * FONCTIONS POUR AJOUTER/SUPPRIMER/LIER DANS LA BDD *
-=======================================================
+=======================================================================
+ * FONCTIONS POUR AJOUTER/SUPPRIMER/LIER/DELIER/MODIFIER DANS LA BDD *
+=======================================================================
  */
 
 /*
-===============
+---------------
   * AJOUTER *  
-===============
+---------------
 */
 
 /**
@@ -190,26 +374,26 @@ function ajouterTag($nomTag) {
 }
 
 /*
-===============
+---------------
  * SUPPRIMER *  
-===============
+---------------
 */
 
 
 /**
- * fonction qui supprime dans la BDD une recette avec son nom
+ * fonction qui supprime dans la BDD une recette avec son ID
  */
-function supprimerRecette($nomRecette) {
+function supprimerRecette($idRecette) {
 
     try {
     $query = "DELETE 
             FROM recette 
-            WHERE nom = :nom" ;
+            WHERE recetteID = :recetteID" ;
 
     $statement = $this->pdo->prepare($query);
 
     // remplacement des valeurs avec les parametres
-    $statement->bindValue(':nom', $nomRecette) ;
+    $statement->bindValue(':recetteID', $idRecette) ;
 
 
     $statement->execute();
@@ -271,9 +455,9 @@ function supprimerTag($nomTag) {
 }
 
 /*
-===============
+----------------
     * LIER *  
-===============
+----------------
 */
 
 /**
@@ -322,8 +506,146 @@ function lierRecetteTag($recetteID, $tagID) {
 
 }
 
+/*
+---------------
+  * DELIER *  
+---------------
+*/
+
+/**
+ * fonction qui permet d'enlever la connexion entre une recette et un ingredient
+ */
+function delierRecetteIngredient($recetteID, $ingredientID) {
+
+    try {
+        $query =    "DELETE FROM recetteIngredient 
+                    WHERE recetteID = :recetteID 
+                    AND ingredientID = :ingredientID";
+
+        $statement = $this->pdo->prepare($query);
+
+
+        $statement->bindValue(':recetteID', $recetteID);
+        $statement->bindValue(':ingredientID', $ingredientID);
+        
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur deliaison recette-ingredient : " . $ex->getMessage());
+    }
+}
+
+
+
+/**
+ * fonction qui permet d'enlever la connexion entre une recette et un tag
+ */
+function delierRecetteTag($recetteID, $tagID) {
+
+    try {
+        $query =    "DELETE FROM recetteTag
+                    WHERE recetteID = :recetteID 
+                    AND tagID = :tagID";
+
+        $statement = $this->pdo->prepare($query);
+
+
+        $statement->bindValue(':recetteID', $recetteID);
+        $statement->bindValue(':tagID', $tagID);
+        
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur deliaison recette-tag : " . $ex->getMessage());
+    }
+    
+}
+
+/*
+----------------
+  * MODIFIER *  
+----------------
+*/
+
+function modifierRecette($recetteID, $nom, $texte, $photo) {
+
+    try {
+        $query = "UPDATE recette 
+                SET nom = :nom,
+                texte = :texte,
+                photo = :photo
+                WHERE recetteID = :recetteID";
+        
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':recetteID', $recetteID);
+
+        $statement->bindValue(':nom', $nom);
+        $statement->bindValue(':texte', $texte);
+        $statement->bindValue(':photo', $photo);
+
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur modifierRecette : " . $ex->getMessage());
+    }
+
+}
+
+function modifierIngredient($ingredientID, $nom, $photo) {
+
+    try {
+        $query = "UPDATE ingredient
+                SET nom = :nom,
+                photo = :photo
+                WHERE ingredientID = :ingredientID";
+        
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':ingredientID', $ingredientID);
+
+        $statement->bindValue(':nom', $nom);
+        $statement->bindValue(':photo', $photo);
+
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur modifierIngredient : " . $ex->getMessage());
+    }
+
+}
+
+function modifierTag($tagID, $nom) {
+
+    try {
+        $query = "UPDATE tag
+                SET nom = :nom
+                WHERE tagID = :tagID";
+        
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':tagID', $tagID);
+
+        $statement->bindValue(':nom', $nom);
+
+
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur modifierTag: " . $ex->getMessage());
+    }
+
+}
+
 
 
 }
+
+
+
+
+
+
+
 
 
