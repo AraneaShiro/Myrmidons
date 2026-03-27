@@ -51,6 +51,44 @@ function rechercherRecettesAll() {
 }
 
 /**
+ * fonction qui donne toutes les ingredients existantes
+ */
+function rechercherIngredientAll() {
+
+    try {
+    $query =    "SELECT * FROM ingredient
+                ORDER BY nom DESC" ;
+
+    $statement = $this->pdo->prepare($query);
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+    } catch(\Exception $ex){
+        die("Erreur rechercherIngredientAll : " . $ex->getMessage()) ;
+}
+}
+
+/**
+ * fonction qui donne toutes les tags existantes
+ */
+function rechercherTagAll() {
+
+    try {
+    $query =    "SELECT * FROM tag
+                ORDER BY nom DESC" ;
+
+    $statement = $this->pdo->prepare($query);
+
+    $statement->execute();
+
+    return $statement->fetchAll();
+    } catch(\Exception $ex){
+        die("Erreur rechercherTagAll : " . $ex->getMessage()) ;
+}
+}
+
+/**
  * fonction qui recherche les mots qui ressemble à celui donner
  */
 function rechercherRecettes($motRecherche) {
@@ -76,9 +114,9 @@ function rechercherRecettes($motRecherche) {
 }
 
 /* 
-=================================================
- * FONCTIONS POUR CREER OU MODIFIER DANS LA BDD *
-=================================================
+=======================================================
+ * FONCTIONS POUR AJOUTER/SUPPRIMER/LIER DANS LA BDD *
+=======================================================
  */
 
 /*
@@ -185,6 +223,7 @@ function supprimerRecette($nomRecette) {
 /**
  * fonction qui supprime dans la BDD un ingredient avec son nom
  */
+/*
 function supprimerIngredient($nomIngredient) {
 
     try {
@@ -205,6 +244,7 @@ function supprimerIngredient($nomIngredient) {
     }
 
 }
+*/
 
 /**
  * fonction qui supprime dans la BDD un tag avec son nom
@@ -230,7 +270,57 @@ function supprimerTag($nomTag) {
 
 }
 
+/*
+===============
+    * LIER *  
+===============
+*/
 
+/**
+ * fonction pour lier une recette & un ingredient
+ * on donnera les ID
+ */
+function lierRecetteIngredient($recetteID, $ingredientID) {
+
+    try {
+        $query = "INSERT INTO recetteIngredient (recetteID, ingredientID) 
+                VALUES (:recetteID, :ingredientID)";
+        
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':recetteID', $recetteID);
+        $statement->bindValue(':ingredientID', $ingredientID);
+
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur liaison recette-ingredient : " . $ex->getMessage());
+    }
+
+}
+
+/**
+ * fonction pour lier une recette & un tag
+ * on donnera les ID
+ */
+function lierRecetteTag($recetteID, $tagID) {
+
+    try {
+        $query = "INSERT INTO recetteTag (recetteID, tagID) 
+                VALUES (:recetteID, :tagID)";
+        
+        $statement = $this->pdo->prepare($query);
+
+        $statement->bindValue(':recetteID', $recetteID);
+        $statement->bindValue(':tagID', $tagID);
+
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur liaison recette-tag : " . $ex->getMessage());
+    }
+
+}
 
 
 
