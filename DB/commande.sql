@@ -8,14 +8,14 @@ DELETE FROM tag;
 
 /* implementation test */
 
-INSERT INTO recette VALUES (1, "Pate bolo", "Ceci est une recette de pate bolo", "../images/bolo.jpg");
+INSERT INTO recette (nom, texte, photo) VALUES ("Pate bolo", "Ceci est une recette de pate bolo", "../images/bolo.jpg");
 
-INSERT INTO ingredient VALUES (1, "pate", "/");
-INSERT INTO ingredient VALUES (2, "tomate", "/");
+INSERT INTO ingredient (nom, photo) VALUES ("pate", "/");
+INSERT INTO ingredient (nom, photo) VALUES ("tomate", "/");
 
-INSERT INTO tag VALUES (1, "excellent");
+INSERT INTO tag (nom) VALUES ("excellent");
 
-INSERT INTO recetteIngredient VALUES (1,1);
-INSERT INTO recetteIngredient VALUES (1,2);
+INSERT INTO recetteIngredient (recetteID, ingredientID) VALUES (1,1);
+INSERT INTO recetteIngredient (recetteID, ingredientID) VALUES (1,2);
 
-INSERT INTO recetteTag VALUES (1,1);
+INSERT INTO recetteTag (recetteID, tagID) VALUES (1,1);
