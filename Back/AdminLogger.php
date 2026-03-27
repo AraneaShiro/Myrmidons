@@ -1,0 +1,36 @@
+<?php
+class AdminLogger{
+    public function generateLoginForm(string $action): void {
+        echo '
+        <form method="post" 
+            action="'. htmlspecialchars($action) .'"
+            >
+            <input type="text" name="username" id="username" placeholder="Username">
+            <input type="password" name="password" id="password" placeholder="Password">
+            <button type="submit">Login</button>
+        </form>
+        ';
+    }
+
+    public function log(string $username, string $password): array {
+        $response = [
+            'granted' => false, 
+            'username' => null, 
+            'error' => null
+        ];
+        if ($username != "username" || $password != "password") { // a définir : username admin et password definitifs
+            if (empty($username)) {
+                $response['error'] = "Username is empty";
+            } elseif (empty($password)) {
+                $response['error'] = "Password is empty";
+            } else {
+                $response['error'] = "Authentication failed";
+            }
+        }
+        if ($response['error'] === null) {
+            $response['granted'] = true;
+            $response['username'] = $username;
+        } 
+        return $response;
+    }
+}
