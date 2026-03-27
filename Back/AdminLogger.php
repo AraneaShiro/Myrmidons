@@ -1,4 +1,5 @@
 <?php
+// generation et gestion du formulaire de login admin
 class AdminLogger{
     public function generateLoginForm(string $action): void {
         echo '

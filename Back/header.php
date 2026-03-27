@@ -10,6 +10,7 @@ if(isset($_POST['username']) && isset($_POST['password'])){
     $result = $logger->log($username, $password);
     if($result['granted']){
         $_SESSION['nickname'] = $result['username'];
+        header("Location: login_admin.php");
     }
 }
 $logged = isset($_SESSION['nickname']) ;
@@ -18,7 +19,7 @@ $logged = isset($_SESSION['nickname']) ;
 <header class="mainHeader">
     <div class="navBar">
         <a href="index.php">SearchPage</a>
-        <a href="index.php">Edit</a>
+        <a href="index.php">A propos</a>
     </div>
     <div class="title">Myrmidons</div>
     <div class="LogIn">

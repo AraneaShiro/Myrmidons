@@ -4,46 +4,72 @@
     error_reporting(E_ALL);
     require_once 'Template.php';
     require_once "AdminLogger.php";
-    $logged = isset($_SESSION['nickname']) ;
+    require_once "RechercheForm.php";
+    require_once "AddContent.php";
+    session_start();
+    $recherche = new RechercheForm();
+    $addition = new AddContent();
 ?>
 <?php ob_start() ?>
-<div id="searchBar"><input class="inputText" type="text" placeholder="Tartiflette"></div>
-<div id="mainWrapper">
-    <div id="filterContent">
-        <div><label for="Ingredient">Ingredient</label>
-            <select name="cars" id="cars">
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="mercedes">Mercedes</option>
-                <option value="audi">Audi</option>
-            </select>
-            <button id="AddIngredient" class="btn">Add Ingredient</button>
+    <!-- Barre de recherche en haut-->
+    <div id="searchBar">
+        <?php $recherche->generateRecetteForm()?>
+    </div>
+    <!-- Wrapper principal -->
+    <div id="mainWrapper">
+        <!-- Partie gauche-->
+        <div id="leftContainer">
+            <!-- Wrapper des filtres de recherche -->
+            <div id="filterContent">
+                <!-- Filtre ingrédient -->
+                <div>
+                    <?php $recherche->generateIngredientForm()?>
+                </div>
+                <!-- Filtre tag -->
+                <div>
+                    <?php $recherche->generateTagForm()?>
+                </div>
+            </div>
+            <!-- Partie admin d'ajout et suppression tag et ing-->
+            <div class="adminCrud" id="IngTagCrud">
+                <?php if(isset($_SESSION['nickname'])):?>
+                <!-- Partie Tag -->
+                <div id="CrudTag">
+                    <?php 
+                        $addition->generateTagDeleteForm();
+                        $addition->generateTagAdditionForm();
+                    ?>
+                </div>
+                <!-- Partie ingrédient -->
+                <div id="CrudIng">
+                    <?php $addition->generateIngredientAddForm(); ?>
+                    <div>
+                    <button class="btn" id="AddRecetteForm">Add recette</button>
+                </div>
+                </div>
+                <?php endif ?>
+            </div>   
         </div>
-        <div><label for="Tag">Tag</label>
-            <select name="cars" id="cars">
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="mercedes">Mercedes</option>
-                <option value="audi">Audi</option>
-            </select>
-            <button id="AddTag" class="btn">Add Tag</button>
+        <!-- Partie droite -->
+        <div class="mainContentWrapper">
+            <?php echo '' ?>
+            <!-- Filtre appliqué -->
+            <div class="DisplayFilter">
+                <div>Tags:
+                    <div id="filterDisplayTag"></div>
+                </div>
+                <div>Ingrédients:
+                    <div id="filterDisplayIng"></div>
+                </div>
+            </div>
+            <!-- Montre les résultats -->
+            <div class="showResult">
+                <link rel="stylesheet" href="css/inputRecette.css">
+                <div class="page">
+                    <?php $addition->generateRecetteAddForm() ?>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="mainContentWrapper">
-        <div class="DisplayFilter">
-            <p>tag:</p>
-        </div>
-        <div class="showResult">
-            <?php include "../Front/carte.php" ?>
-            <?php include "carte.php" ?>
-            <?php include "carte.php" ?>
-            <?php include "carte.php" ?>
-            <?php include "carte.php" ?>
-            <?php include "carte.php" ?>
-            <?php include "carte.php" ?>
-            <?php include "carte.php" ?>
-        </div>
-    </div>
-</div>
 <?php $content=ob_get_clean() ?>
 <?php Template::render($content) ?>

@@ -1,4 +1,5 @@
 <?php
+// template pour la page d'index
 class Template{
     public static function render(string $content) : void{?>
         <!doctype html>
@@ -15,7 +16,6 @@ class Template{
                 <?php echo $content ?> <!-- Injection du contenu-->
             </div>
             <?php include "footer.php"?>
-            <script src="../Front/script/filter.js"></script>
         </body>
         </html>
     <?php
