@@ -9,8 +9,10 @@ class RechercheForm{
     }
     public function generateRecetteForm(){
         $motRecherche = htmlspecialchars($_GET['recette'] ?? '');
-        echo '<input class="inputText" type="text" name="recette" placeholder="Recette ..." value="' . $motRecherche . '">';
+        echo '<input class="inputText" id="searchBarInput" type="text" name="recette" placeholder="Recette ..." value="' . $motRecherche . '">';
         if($motRecherche != ''){
+
+        ///?????????????????? PK ???????????? c est la barre de recherche
             $recettes = $this->db->rechercherRecettes($motRecherche);
             echo '<select class="RecetteSelect" name="recette">';
             foreach($recettes as $recette){
@@ -26,19 +28,22 @@ class RechercheForm{
     public function generateIngredientForm(){
         $ingredients = $this->db->rechercherIngredientAll();
         echo '<label for="Ingredient">Ingredient</label>
-            <select class="IngredientSelect" name="ingredient">';
+            <select class="IngredientSelect" name="ingredient" id="tagSelection">
+            <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
         foreach ($ingredients as $ingredient){
             $nom = htmlspecialchars($ingredient['nom']);
             $id = htmlspecialchars($ingredient['id']);
             echo "<option value=\"{$id}\">{$nom}</option>";
         }
+
         echo '</select>
         <button id="AddIngredient" class="btn">Add Ingredient</button>';
     }
 
     public function generateTagForm(){
         $tags = $this->db->rechercherIngredientAll();
-        echo '<label for="Tag">Tag</label><select class="TagSelect" name="tag">';
+        echo '<label for="Tag">Tag</label><select class="TagSelect" name="tag" id="ingredientSelector">
+        <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
             $id = htmlspecialchars($tag['id']);

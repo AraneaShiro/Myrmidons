@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let tabIngs  = []   // noms des ingrédients ajoutés à la recette
 
     
+    // ── command test ───────────────────────────────
+    //console.log(button_deleteTag)
+
+
 
     // ══════════════════════════════════════════════════════════════
     //  HELPER
@@ -160,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return true
     }
 
+    /** Verifie que la description a au moins 10 char */
     function validateDescription() {
         let ok = inputDesc.value.trim().length >= 10
         document.getElementById('descSection').classList.toggle('invalid', !ok)
@@ -301,7 +306,8 @@ document.addEventListener('DOMContentLoaded', function () {
     //  LOGIQUE – BOUTONS ADMIN
     // ══════════════════════════════════════════════════════════════
 
-    button_deleteTag.addEventListener("click", function () {
+    if(button_deleteTag !=null){
+        button_deleteTag.addEventListener("click", function () {
         if (!validateDeleteTag()) return
         console.log("DeleteTag id:", select_DeleteTag.value)
         let URL="/Back/index.php"
@@ -327,6 +333,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("ERREUR avec le fetch new Recette.", error)
         })
     })
+    }
+    
 
     button_addNewTag.addEventListener("click", function () {
         if (!validateNewTag()) return
@@ -355,32 +363,34 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     })
 
-    button_DeleteIng.addEventListener("click", function () {
-        if (!validateDeleteIng()) return
-        console.log("DeleteIng id:", select_DeleteIng.value)
-        let URL="/Back/index.php"
+    if(button_DeleteIng !=null){
+        button_DeleteIng.addEventListener("click", function () {
+            if (!validateDeleteIng()) return
+            console.log("DeleteIng id:", select_DeleteIng.value)
+            let URL="/Back/index.php"
 
-            let data= new FormData()
-            
-            data.append("DeletedIng",select_DeleteIng.value)
-   
-            let options ={
-                method :'POST',
-                body : data
-            }
+                let data= new FormData()
+                
+                data.append("DeletedIng",select_DeleteIng.value)
 
-            fetch(URL,options).then(response =>{
-            if (response.ok) {
-                response.json().then(data => { // json() parse les données
-                    console.log("Ingredient deleted")
-                })
-            } else {
-                alert("ERREUR avec la requête.", response.statusText);
-            }
-        }).catch(error => {
-            console.log("ERREUR avec le fetch new Recette.", error)
+                let options ={
+                    method :'POST',
+                    body : data
+                }
+
+                fetch(URL,options).then(response =>{
+                if (response.ok) {
+                    response.json().then(data => { // json() parse les données
+                        console.log("Ingredient deleted")
+                    })
+                } else {
+                    alert("ERREUR avec la requête.", response.statusText);
+                }
+            }).catch(error => {
+                console.log("ERREUR avec le fetch new Recette.", error)
+            })
         })
-    })
+    }
 
     button_AddNewIng.addEventListener("click", function () {
         if (!validateNewIng()) return
@@ -521,9 +531,14 @@ AddRecetteButton.addEventListener("click", function () {
 
         // Affiche le formulaire (si caché)
         document.getElementById('FormRecette').style.display = 'block';
+        showing=true;
+        AddRecetteButton.innerText="Cache le formulaire"
     }
 });
 
+        // =========================
+        //  Delete button de chaque recette
+        // =========================
 
     document.querySelectorAll('.card .DeleteRecette').forEach(button => {
         button.addEventListener('click', function() {
@@ -531,10 +546,32 @@ AddRecetteButton.addEventListener("click", function () {
             // remonte à la carte parente
             const card = this.closest('.card');
 
-            // récupère le h2 dans CETTE carte uniquement
-            const titre = card.querySelector('.card__title h2').textContent;
+            // On recupere l ID de la recette
+            const ID = card.querySelector('h6').textContent;
 
-            console.log(titre);
+           let URL="/Back/index.php"
+
+            let data= new FormData()
+            data.append("DeletedId",ID)
+
+            let options ={
+                method :'POST',
+                body : data
+            }
+
+            fetch(URL,options).then(response =>{
+            if (response.ok) {
+                
+                    card.remove();
+                    console.log("Recette deleted")
+
+            } else {
+                alert("ERREUR avec la requête.", response.statusText);
+            }
+        }).catch(error => {
+            console.log("ERREUR avec le fetch new Recette.", error)
+        })
+
         });
     });
 

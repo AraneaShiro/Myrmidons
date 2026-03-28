@@ -21,7 +21,8 @@ class AddContent{
         $tags = $this->db->rechercherIngredientAll();
         echo '<label for="Tag">Tag</label>
         <select name="tagSelection" id="tagDeleteSelection">
-        <option value="" disabled selected>-- Choisir un tag --</option>';
+        <option value="" disabled selected>-- Choisir un tag --</option>
+        <option value="test" class="TagSelect"> test</option>'; //Ligne pour les tests
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
             echo "<option value=\"{$nom}\">{$nom}</option>";
@@ -72,26 +73,29 @@ class AddContent{
         }
     }
 
-
+    //Fonction qui genere l'input de l image pour la recette
     public function generateImgForm(){
-        echo '<div class="image-preview" id="imagePreview"
-              onclick="document.getElementById("imgFileInput").click()">
-                    <div class="image-placeholder" id="imgPlaceholder">
-                        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"
-                            viewBox="0 0 24 24">
-                            <rect x="3" y="3" width="18" height="18" rx="3" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <path d="M21 15l-5-5L5 21" />
-                        </svg>
-                        <span>Cliquer pour choisir une image</span>
-                    </div>
-                </div>
-                <input type="file" id="imgFileInput" accept="image/*" />
-                <button class="btn-img" onclick="document.getElementById("imgFileInput").click()">
-                    📁 Choisir une image
-                </button>
-                <div class="error-msg" id="errImg">Veuillez sélectionner une image valide.</div>';
-    }
+    echo '<div class="image-zone">
+        <div class="image-preview" id="imagePreview"
+            onclick="document.getElementById(\'imgFileInput\').click()">
+            <div class="image-placeholder" id="imgPlaceholder">
+                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"
+                    viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="M21 15l-5-5L5 21" />
+                </svg>
+                <span>Cliquer pour choisir une image</span>
+            </div>
+        </div>
+        <input type="file" id="imgFileInput" accept="image/*" />
+        <button class="btn-img" onclick="document.getElementById(\'imgFileInput\').click()">📁
+            Choisir une image</button>
+        <div class="error-msg" id="errImg">Veuillez sélectionner une image valide.</div>
+    </div>';
+}
+
+
     // fonction qui genere le formulaire pour ajouter des tags à une recette lors de sa creation
     public function generateTagListAdd(){
         $tags = $this->db->rechercherIngredientAll();
@@ -100,7 +104,8 @@ class AddContent{
                     <span>Aucun tag ajouté</span>
                 </div>
                 <select id="tagInput">
-                    <option value="" disabled selected>-- Choisir un tag --</option>';
+                    <option value="" disabled selected>-- Choisir un tag --</option>
+                    <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
             $id = htmlspecialchars($tag['id']);
@@ -120,8 +125,9 @@ class AddContent{
         <label>Liste Ingrédients</label>
         <div class="ing-grid" id="ingGrid"></div>
         <select id="ingSelect">
-                <option value="" disabled selected>-- Choisir un ingrédient --</option>';
-        foreach ($ingredients as $ingredient){
+                <option value="" disabled selected>-- Choisir un ingrédient --</option>
+                <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
+        foreach ($ingredients as $ingredient){ 
             $nom = htmlspecialchars($ingredient['nom']);
             $id = htmlspecialchars($ingredient['id']);
             echo "<option value=\"{$id}\">{$nom}</option>";
@@ -146,6 +152,7 @@ class AddContent{
 
     public function generateRecetteAddForm(){
         echo '<!-- TITRE -->
+        <div class="page" id="FormRecette">
                 <div class="recipe-title-wrap">
                     <input type="text" id="inputTitle" placeholder="Nom recette" maxlength="80" />
                     <div class="error-msg" id="errTitle">Le nom de la recette est requis.</div>
@@ -179,9 +186,12 @@ class AddContent{
                     <!-- DESCRIPTION -->';
         $this->generateDescriptionForm();
         echo '
+        <!-- ID -->
+        <h6 id="IdContainer"></h6>
             <!-- SUBMIT -->
             <div class="submit-row">
             <button class="btn-submit" id="btnSubmit">Enregistrer la recette</button>
-            </div>';
+            </div> </div>'
+            ;
     }
 }
