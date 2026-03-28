@@ -16,22 +16,27 @@ if(isset($_POST['username']) && isset($_POST['password'])){
 $logged = isset($_SESSION['nickname']) ;
 
 ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <header class="mainHeader">
-    <div class="navBar">
-        <a href="index.php">SearchPage</a>
-        <a href="index.php">A propos</a>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/inputRecette.css">
+    <link rel="stylesheet" href="css/carte.css">
+    <div class="navBar navbar navbar-expand-lg navbar-light ">
+        <a href="index.php" class="navbar-brand">Home</a>
+        <a href="index.php" class="navbar-brand">A propos</a>
     </div>
     <div class="title">Myrmidons</div>
     <div class="LogIn">
         <?php if ($logged):?>
+        <div>
+            <?php echo htmlspecialchars($_SESSION['nickname']) ; ?>
             <div>
-                <?php echo htmlspecialchars($_SESSION['nickname']) ; ?>
-                <div>
-                    <a href="logout.php">Logout</a>
-                </div>
+                <a href="logout.php" class="btn btn-dark">Logout</a>
             </div>
+        </div>
         <?php else: ?>
-                <?php 
+        <?php 
                     if(!isset($result)){
                         $logger->generateLoginForm("index.php");
                     }else{
@@ -43,4 +48,3 @@ $logged = isset($_SESSION['nickname']) ;
     </div>
 
 </header>
- 

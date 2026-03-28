@@ -12,7 +12,7 @@
 ?>
 <?php ob_start() ?>
 <!-- Barre de recherche en haut-->
-<p>HELLO</p>
+
 <div id="searchBar">
     <?php $recherche->generateRecetteForm()?>
 </div>
@@ -50,7 +50,7 @@
             <div id="CrudIng">
                 <?php $addition->generateIngredientAddForm(); ?>
                 <div>
-                    <button class="btn" id="AddRecetteForm">Add recette</button>
+                    <button class="btn btn-secondary" id="AddRecetteForm">Add recette</button>
                 </div>
             </div>
             <?php endif ?>
@@ -78,8 +78,12 @@
 
                 <!-- LIGNE HAUTE -->
                 <div class="card__top">
-                    <button class="ModifRecette">Modifier</button>
-                    <button class="DeleteRecette">Supprimer</button>
+
+
+                    <button class="ModifRecette btn-warning">Modifier</button>
+                    <button class="DeleteRecette btn-danger">Supprimer</button>
+
+
 
                     <!-- IMAGE -->
                     <div class="card__image">
@@ -105,14 +109,17 @@
                         <div class="card__list">
                             <h3>Liste Ingrédients</h3>
                             <ul>
-                                <li><span class="dot"></span> Ing1</li>
-                                <li><span class="dot"></span> Ing1</li>
-                                <li><span class="dot"></span> Ing1</li>
-                                <li><span class="dot"></span> Ing1</li>
-                                <li><span class="dot"></span> Ing1g</li>
-                                <li><span class="dot"></span> Ing1</li>
-                                <li><span class="dot"></span> Ing1</li>
-                                <li><span class="dot"></span> Ing1</li>
+                                <li><img class="IngPicture" src="../image/lasagne.jpg" alt=""></span>
+                                    Ing1</li>
+
+                                <li><img class="IngPicture" src="../image/lasagne.jpg" alt=""></span>
+                                    Ing1</li>
+                                <li><img class="IngPicture" src="../image/lasagne.jpg" alt=""></span>
+                                    Ing1</li>
+                                <li><img class="IngPicture" src="../image/lasagne.jpg" alt=""></span>
+                                    Ing1</li>
+                                <li><img class="IngPicture" src="../image/lasagne.jpg" alt=""></span>
+                                    Ing1</li>
                             </ul>
                         </div>
 

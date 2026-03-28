@@ -12,7 +12,7 @@ class AddContent{
     // fonction pour generer le formulaire d'ajout de tags
     public function generateTagAdditionForm(){
         echo '<label for="NamenewTag">NewTagName</label>
-            <input type="text" id="NewTagInput">
+            <input type="text" id="NewTagInput" class="form-control">
             <button class="btn" id="AddNewTag">+</button>';
     }
 
@@ -28,16 +28,18 @@ class AddContent{
             echo "<option value=\"{$nom}\">{$nom}</option>";
         }
         echo '</select>
-        <button class="btn" id="DeleteTag">-</button>';
+        <button class="btn btn-warning btn-sm" id="DeleteTag">-</button>';
     }
 
     // fonction pour generer le formulaire d'ajout d'ingrédient
     public function generateIngredientAddForm(){
-        echo '<label for="NamenewIng">New Ingredient name</label>
-                    <input type="text" id="NewIngIput">
-                    <input type="file" class="fileInput" id="imgInputIng" name="imgInputIng">
-                    <button class="btn" id="AddNewIng">+</button>
-        '; 
+        echo '
+        <div class="input-group mb-3">
+        <label for="NamenewIng" class="input-group-text">New Ingredient name</label>
+                    <input type="text" id="NewIngIput" placeholder="Tomate">
+                    <input type="file" class="form-control" id="imgInputIng" name="imgInputIng">
+                    <button class="btn btn-success btn-sm" id="AddNewIng">+</button>
+        </div>'; 
     }
 
 
@@ -89,7 +91,7 @@ class AddContent{
             </div>
         </div>
         <input type="file" id="imgFileInput" accept="image/*" />
-        <button class="btn-img" onclick="document.getElementById(\'imgFileInput\').click()">📁
+        <button class="btn-img btn" onclick="document.getElementById(\'imgFileInput\').click()">📁
             Choisir une image</button>
         <div class="error-msg" id="errImg">Veuillez sélectionner une image valide.</div>
     </div>';
@@ -133,7 +135,7 @@ class AddContent{
             echo "<option value=\"{$id}\">{$nom}</option>";
         }
         echo '</select>
-            <button class="btn-add-ing" id="btnAddIng">+ Ajouter un ingrédient</button>
+            <button class="btn-add-ing btn" id="btnAddIng">+ Ajouter un ingrédient</button>
             <div class="error-msg" id="errIng">Ajoutez au moins un ingrédient.</div>
         ';
     }
@@ -190,7 +192,7 @@ class AddContent{
         <h6 id="IdContainer"></h6>
             <!-- SUBMIT -->
             <div class="submit-row">
-            <button class="btn-submit" id="btnSubmit">Enregistrer la recette</button>
+            <button class="btn-submit btn" id="btnSubmit">Enregistrer la recette</button>
             </div> </div>'
             ;
     }
