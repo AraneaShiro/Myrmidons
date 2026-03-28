@@ -1,10 +1,8 @@
 /* -----------------------------------Header ----------------------*/
 header {
-
     display: flex;
     justify-content: space-between;
     align-items: center;
-
 
 }
 
@@ -12,7 +10,6 @@ header {
 
 .navBar {
     width: 17%;
-
     display: flex;
     justify-content: space-around;
 
@@ -68,6 +65,9 @@ header {
 
 body {
     background: linear-gradient(to top, rgba(255, 0, 0, 0), rgb(247, 153, 153));
+    font-family: "Lugrasimo", cursive;
+    font-weight: 400;
+    font-style: normal;
 
 }
 
@@ -113,10 +113,28 @@ a {
 
 /* Wrapper Filter */
 #filterContent {
-    background-color: blue;
+
     display: flex;
     flex-direction: column;
 
+}
+
+.filterIng {
+    display: flex;
+    flex-direction: column;
+}
+
+.topFiltre {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.topFiltre label {
+    color: rgb(101, 6, 6);
+    font-size: large;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
 
 /*Conteneur filtre top*/
@@ -130,13 +148,16 @@ a {
     width: 500px;
 }
 
+.adminCrud {
+    width: 100%;
+}
+
 
 /* conteneur de gauche */
 #leftContainer {
     width: 20%;
     border: solid;
     height: 100%;
-    background-color: chartreuse;
     overflow: auto;
     display: grid;
     grid-template-columns: 1fr;
@@ -144,6 +165,10 @@ a {
     height: 100%;
     /* ou une hauteur fixe, ex: 400px */
 }
+
+
+
+
 
 /* Wrapper Diplay tag */
 
@@ -153,21 +178,48 @@ a {
 .mainContentWrapper {
 
     width: 80%;
-    border: solid;
+
     height: 100%;
-    background-color: red;
+
 }
 
 .DisplayFilter {
-    background-color: orange;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 1px;
+    text-align: center;
+    align-items: baseline;
+}
+
+.displayFil {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
+}
+
+.tagButton {
+    display: inline-block;
+    padding: 4px 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    background-color: #feb7b4;
+    border-radius: 999px;
+    border: 1px solid #b6b6b6;
+}
+
+tagButton.hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
 }
 
 .showResult {
 
     height: 90%;
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
-    background-color: white;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -180,17 +232,26 @@ a {
 }
 
 .ModifRecette {
-    width: 40%;
+    width: 10%;
+    border: none;
+    border-radius: 10px;
 }
 
 .DeleteRecette {
     width: 10%;
+    border: none;
+    border-radius: 10px;
+}
+
+.adminButton {
+    display: flex;
+
 }
 
 /* -----------------------------------Footer ----------------------*/
 .mainFooter {
 
     text-align: center;
-    background-color: red;
+
     font-size: 17px;
 }

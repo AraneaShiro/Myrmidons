@@ -27,10 +27,16 @@ class RechercheForm{
 </svg></i></button>';
     }
 
+    
     public function generateIngredientForm(){
         $ingredients = $this->db->rechercherIngredientAll();
-        echo '<label for="Ingredient">Ingredient</label>
-            <select class="IngredientSelect" name="ingredient" id="tagSelection">
+        echo '
+        <div class="topFiltre">
+        <label for="Ingredient">Ingredient</label>
+        <button id="AddIngredient" class="btn btn-secondary">Add Ingredient</button>
+            
+        </div>
+        <select class="IngredientSelect" name="ingredient" id="tagSelection">
             <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
         foreach ($ingredients as $ingredient){
             $nom = htmlspecialchars($ingredient['nom']);
@@ -38,20 +44,24 @@ class RechercheForm{
             echo "<option value=\"{$id}\">{$nom}</option>";
         }
 
-        echo '</select>
-        <button id="AddIngredient" class="btn btn-secondary">Add Ingredient</button>';
+        echo '</select>';
     }
 
     public function generateTagForm(){
         $tags = $this->db->rechercherIngredientAll();
-        echo '<label for="Tag">Tag</label><select class="TagSelect" name="tag" id="ingredientSelector">
+        echo '
+        <div class="topFiltre">
+        <label for="Tag">Tag</label>
+        <button id="AddTag" class="btn btn-secondary">Add Tag</button>
+        </div>
+        <select class="TagSelect" name="tag" id="ingredientSelector">
         <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
             $id = htmlspecialchars($tag['id']);
             echo "<option value=\"{$id}\">{$nom}</option>";
         }
-        echo '</select><button id="AddTag" class="btn btn-secondary">Add Tag</button>';
+        echo '</select>';
     }
 
 }

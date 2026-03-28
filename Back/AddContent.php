@@ -11,15 +11,18 @@ class AddContent{
 
     // fonction pour generer le formulaire d'ajout de tags
     public function generateTagAdditionForm(){
-        echo '<label for="NamenewTag">NewTagName</label>
+        echo '<div class="topFiltre"><label for="NamenewTag">NewTagName</label><button class="btn" id="AddNewTag">+</button></div>
+        
             <input type="text" id="NewTagInput" class="form-control">
-            <button class="btn" id="AddNewTag">+</button>';
+            ';
     }
 
     // fonction pour generer le formulaire de suppression des tags
     public function generateTagDeleteForm(){
         $tags = $this->db->rechercherIngredientAll();
-        echo '<label for="Tag">Tag</label>
+        
+        echo '<div class="topFiltre"><label for="Tag">Tag</label><button class="btn btn-warning btn-sm" id="DeleteTag">-</button>
+        </div>
         <select name="tagSelection" id="tagDeleteSelection">
         <option value="" disabled selected>-- Choisir un tag --</option>
         <option value="test" class="TagSelect"> test</option>'; //Ligne pour les tests
@@ -28,18 +31,20 @@ class AddContent{
             echo "<option value=\"{$nom}\">{$nom}</option>";
         }
         echo '</select>
-        <button class="btn btn-warning btn-sm" id="DeleteTag">-</button>';
+        ';
     }
 
     // fonction pour generer le formulaire d'ajout d'ingrédient
     public function generateIngredientAddForm(){
         echo '
-        <div class="input-group mb-3">
-        <label for="NamenewIng" class="input-group-text">New Ingredient name</label>
+        <div class="input-group mb-3 topFiltre">
+        <label for="NamenewIng" class="input-group-text">Nouvelle Ingredient</label>
+        <button class="btn btn-success btn-sm" id="AddNewIng">+</button>
+        </div>
                     <input type="text" id="NewIngIput" placeholder="Tomate">
                     <input type="file" class="form-control" id="imgInputIng" name="imgInputIng">
-                    <button class="btn btn-success btn-sm" id="AddNewIng">+</button>
-        </div>'; 
+                    
+        '; 
     }
 
 
