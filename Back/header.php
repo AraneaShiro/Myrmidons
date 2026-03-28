@@ -16,38 +16,44 @@ if(isset($_POST['username']) && isset($_POST['password'])){
 $logged = isset($_SESSION['nickname']) ;
 
 ?>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
-    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-<header class="mainHeader">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lugrasimo&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/inputRecette.css">
-    <link rel="stylesheet" href="css/carte.css">
-    <div class="navBar navbar navbar-expand-lg navbar-light ">
-        <a href="index.php" class="navbar-brand">Home</a>
-        <a href="index.php" class="navbar-brand">A propos</a>
-    </div>
-    <div class="title">Myrmidons</div>
-    <div class="LogIn">
-        <?php if ($logged):?>
-        <div>
-            <?php echo htmlspecialchars($_SESSION['nickname']) ; ?>
-            <div>
-                <a href="logout.php" class="btn btn-dark">Logout</a>
+<header class="main-header">
+    <nav class="bg-light navbar fixed-top">
+        <div class="d-flex flex-row">
+            <a class="logo mr-4 flex flex-row" href="index.php">
+                <img class="mx-auto" src="../image/myrmidons_logo.png" alt="logo" width="60" height="60" />
+                <span class="logo-text mt-auto font-weight-bold"> Myrmidons </span>
+            </a>
+            <div class="ml-4 mt-auto">
+                <a href="index.php" class="navbar-brand">Home</a>
+                <a href="#apropos" class="navbar-brand">A propos</a>
             </div>
         </div>
-        <?php else: ?>
-        <?php 
-                    if(!isset($result)){
-                        $logger->generateLoginForm("index.php");
-                    }else{
-                        $logger->generateLoginForm("index.php");
-                        echo "<div id='error'>". $result['error'] . "</div>";
-                    }
-                ?>
-        <?php endif; ?>
-    </div>
-
+      
+        <div class="mt-auto">
+            <?php if ($logged):?>
+                <div class="d-flex flex-row">
+                    <span class="mb-2 mt-auto mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                        </svg>
+                        <?php echo htmlspecialchars($_SESSION['nickname']) ; ?> 
+                    </span>
+                    <button onclick="location.href='logout.php'" class="btn mx-2 btn-secondary">Logout</button>
+                </div>
+            <?php else: ?>
+            <?php 
+                if(!isset($result)) 
+                {
+                    $logger->generateLoginForm("index.php");
+                }
+                else
+                {
+                    $logger->generateLoginForm("index.php");
+                    echo "<div id='error'>". $result['error'] . "</div>";
+                }
+            ?>
+            <?php endif; ?>
+        </div>
+    </nav>
 </header>

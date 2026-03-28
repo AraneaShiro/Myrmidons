@@ -3,45 +3,38 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
 }
 
-
-
-.navBar {
-    width: 17%;
-    display: flex;
-    justify-content: space-around;
-
+.main-header {
+    min-height: 60px;
+    max-height: 60px;
 }
 
-.navBar a {
-    background: gray;
+.navbar a {
+    color: black;
+    padding: 2px;
     border-radius: 10px;
-    width: 50%;
-    text-align: center;
 }
 
-
-
-.title {
-    font-size: 40px;
-    padding: 14px 16px;
-    justify-self: center;
-    text-shadow: 2px 2px #313131;
-    text-align: center;
+.navbar a:hover {
+   color: #ec1c24;
+   transition-duration: 0.5s;
 }
 
-
-
-.LogIn {
-    padding: 14px 16px;
-    text-align: center;
-    width: 20%;
+.logo{
     display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    font-size: large;
+    flex-direction: column;
+    text-decoration: none;
+    max-width: 150px;
+}
+
+.logo:hover{
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-text{
+    font-family: 'Lugrasimo';
 }
 
 .btn {
@@ -52,6 +45,10 @@ header {
 
 
 /* -----------------------------------Page Principale ----------------------*/
+
+#injected-content{
+    margin-top: 60px;
+}
 
 /* Search Bar */
 #searchBar {
@@ -84,7 +81,12 @@ body {
 #btnSearch {
     border: none;
     font-size: rem;
+    background-color: brown;
+}
 
+#btnSearch:hover{
+    background-color: rgb(175, 45, 45);
+    transition-duration: 0.2s;
 }
 
 .bi {

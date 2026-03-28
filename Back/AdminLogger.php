@@ -3,11 +3,11 @@
 class AdminLogger{
     public function generateLoginForm(string $action): void {
         echo '
-        <form method="post" 
+        <form class="d-flex p-2" method="post" 
             action="'. htmlspecialchars($action) .'"
             >
-            <input type="text" name="username" id="username" placeholder="Username">
-            <input type="password" name="password" id="password" placeholder="Password">
+            <input class="form-control" type="text" name="username" id="username" placeholder="Username">
+            <input class="form-control mx-2" type="password" name="password" id="password" placeholder="Password">
             <button type="submit" class="btn btn-secondary">Login</button>
         </form>
         ';

@@ -13,7 +13,7 @@
 <?php ob_start() ?>
 <!-- Barre de recherche en haut-->
 
-<div id="searchBar">
+<div id="searchBar" class="container d-flex">
     <?php $recherche->generateRecetteForm()?>
 </div>
 <!-- Wrapper principal -->
@@ -84,12 +84,11 @@
 
 
             <?php $addition->generateRecetteAddForm() ?>
-
+            <!-- la bootstrap classe card -->
             <div class="card">
                 <div class="adminButton">
-                    <button class="ModifRecette btn-outline-warning">Modifier</button>
-                    <button class="DeleteRecette btn-outline-danger">Supprimer</button>
-
+                    <button class="ModifRecette btn btn-outline-warning mr-2">Modifier</button>
+                    <button class="DeleteRecette btn btn-outline-danger">Supprimer</button>
                 </div>
                 <!-- LIGNE HAUTE -->
                 <div class="card__top">
