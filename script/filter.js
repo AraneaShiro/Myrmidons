@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tabIng.push(content)
             let butNewTag = document.createElement("BUTTON")
             butNewTag.innerText = content
-            butNewTag.onclick = () => deleteIng(butNewTag.innerText) // ✅ BUGFIX 2 : arrow function
+            butNewTag.onclick = () => deleteIng(butNewTag.innerText) 
             butNewTag.classList.add("tagButton")
             filterDisplayIng.appendChild(butNewTag)
         }
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tabTag.push(content)
             let butNew = document.createElement("BUTTON")
             butNew.innerText = content
-            butNew.onclick = () => deleteTag(butNew.innerText) // ✅ BUGFIX 2 : arrow function
+            butNew.onclick = () => deleteTag(butNew.innerText) 
             butNew.classList.add("tagButton")
             filterDisplayTag.appendChild(butNew)
         }
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let searchValue = searchBar.value.trim();
 
     // URL de la recherche (relative à ton site)
-    let url = "/Back/index.php";
+    let url = "../Back/index.php";
 
     // Construction des paramètres
     let params = [];

@@ -9,11 +9,7 @@
     --radius: 12px;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+
 
 
 .page {
@@ -33,7 +29,7 @@
 .recipe-title-wrap input {
     background: transparent;
     border: none;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid;
     color: black;
     font-family: 'Playfair Display', serif;
     font-size: 2rem;
@@ -76,8 +72,8 @@
 .image-preview {
     width: 240px;
     height: 200px;
-    border-radius: var(--radius);
-    border: 2px dashed var(--border);
+    border-radius: 2px;
+    border: 2px dashed;
     overflow: hidden;
     background: rgba(0, 0, 0, 0.2);
     display: flex;
@@ -121,11 +117,11 @@
 
 .btn-img {
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--border);
-    color: var(--white);
+    border: 1px solid;
+    color: black;
     border-radius: 8px;
     padding: 8px 12px;
-    font-family: 'DM Sans', sans-serif;
+
     font-size: 0.82rem;
     cursor: pointer;
     text-align: center;
@@ -250,7 +246,7 @@
 }
 
 .ing-item {
-    background: var(--white);
+    background: white;
     border-radius: var(--radius);
     padding: 10px 14px;
     display: flex;
@@ -258,6 +254,7 @@
     gap: 8px;
     border: 2px solid transparent;
     transition: border-color .2s;
+    width: auto;
 }
 
 .ing-item:focus-within {
@@ -299,10 +296,10 @@
 
 .btn-add-ing {
     background: rgba(255, 255, 255, 0.1);
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
+    border: 1px dashed;
+    border-radius: 15px;
+    color: black;
+
     padding: 10px;
     cursor: pointer;
     font-size: 0.85rem;
@@ -311,12 +308,12 @@
 }
 
 .btn-add-ing:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.358);
 }
 
 /* DESCRIPTION */
 .desc-section {
-    background: var(--accent);
+    background: rgb(211, 211, 211);
     border-radius: var(--radius);
     padding: 20px 24px;
 }
@@ -334,7 +331,7 @@
     background: transparent;
     border: none;
     outline: none;
-    color: var(--white);
+    color: black;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     line-height: 1.6;
@@ -371,7 +368,7 @@
 
 .btn-submit {
     background: var(--white);
-    color: var(--bg);
+    color: black;
     border: none;
     border-radius: var(--radius);
     font-family: 'Playfair Display', serif;
