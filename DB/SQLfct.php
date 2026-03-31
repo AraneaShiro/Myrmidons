@@ -128,18 +128,18 @@ function rechercherRecettes($motRecherche) {
 /**
  * fonction qui recherche les recettes contenants le tag
  */
-function rechercherRecettesParTag($tagID) {
+function rechercherRecettesParTag($tagNom) {
 
     try {
     $query =    "SELECT * FROM recette
                 JOIN recetteTag ON recetteTag.recetteID = recette.recetteID
-                WHERE recetteTag.tagID = :tagID
+                WHERE recetteTag.tagNom = :tagNom
                 ORDER BY recette.nom DESC" ;
 
     $statement = $this->pdo->prepare($query);
 
     // remplacement des valeurs avec les parametres
-    $statement->bindValue(':tagID',   $tagID) ;
+    $statement->bindValue(':tagNom',   $tagNom) ;
 
     $statement->execute();
 
@@ -205,7 +205,7 @@ function rechercherIngredientsDansRecette($recetteID) {
 function rechercherTagsDansRecette($recetteID) {
     try{
     $query =    "SELECT * FROM tag
-                JOIN recetteTag ON recetteTag.tagID = tag.tagID
+                JOIN recetteTag ON recetteTag.tagNom = tag.tagNom
                 WHERE recetteTag.recetteID = :recetteID
                 ORDER BY tag.nom DESC" ;
       
@@ -277,22 +277,22 @@ function rechercherIngredientParID($ingredientID) {
 /**
  * fonction qui donne un tag en utilisant son ID
  */ 
-function rechercherTagParID($tagID) {
+function rechercherTagParNom($tagNom) {
 
     try{
         $query = "SELECT * FROM tag
-                WHERE tagID = :tagID";
+                WHERE nom = :tagNom";
 
         $statement = $this->pdo->prepare($query);
 
-        $statement->bindValue(':tagID', $tagID);
+        $statement->bindValue(':tagNom', $tagNom);
 
         $statement->execute();
 
         return $statement->fetch();
 
     } catch(\Exception $ex){
-        die("Erreur rechercherTagParID : " . $ex->getMessage());
+        die("Erreur rechercherTagParNom : " . $ex->getMessage());
     }
 }
 
@@ -487,16 +487,16 @@ function lierRecetteIngredient($recetteID, $ingredientID) {
  * fonction pour lier une recette & un tag
  * on donnera les ID
  */
-function lierRecetteTag($recetteID, $tagID) {
+function lierRecetteTag($recetteID, $tagNom) {
 
     try {
-        $query = "INSERT INTO recetteTag (recetteID, tagID) 
-                VALUES (:recetteID, :tagID)";
+        $query = "INSERT INTO recetteTag (recetteID, tagNom) 
+                VALUES (:recetteID, :tagNom)";
         
         $statement = $this->pdo->prepare($query);
 
         $statement->bindValue(':recetteID', $recetteID);
-        $statement->bindValue(':tagID', $tagID);
+        $statement->bindValue(':tagNom', $tagNom);
 
         $statement->execute();
 
@@ -540,18 +540,18 @@ function delierRecetteIngredient($recetteID, $ingredientID) {
 /**
  * fonction qui permet d'enlever la connexion entre une recette et un tag
  */
-function delierRecetteTag($recetteID, $tagID) {
+function delierRecetteTag($recetteID, $tagNom) {
 
     try {
         $query =    "DELETE FROM recetteTag
                     WHERE recetteID = :recetteID 
-                    AND tagID = :tagID";
+                    AND tagNom = :tagNom";
 
         $statement = $this->pdo->prepare($query);
 
 
         $statement->bindValue(':recetteID', $recetteID);
-        $statement->bindValue(':tagID', $tagID);
+        $statement->bindValue(':tagNom', $tagNom);
         
         $statement->execute();
 
@@ -615,18 +615,17 @@ function modifierIngredient($ingredientID, $nom, $photo) {
 
 }
 
-function modifierTag($tagID, $nom) {
+function modifierTag($tagNom, $newNom) {
 
     try {
         $query = "UPDATE tag
                 SET nom = :nom
-                WHERE tagID = :tagID";
+                WHERE nom = :tagNom";
         
         $statement = $this->pdo->prepare($query);
 
-        $statement->bindValue(':tagID', $tagID);
-
-        $statement->bindValue(':nom', $nom);
+        $statement->bindValue(':tagNom', $tagNom);
+        $statement->bindValue(':nom', $newNom);
 
 
         $statement->execute();

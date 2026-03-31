@@ -18,8 +18,7 @@ CREATE TABLE ingredient (
 );
 
 CREATE TABLE tag (
-    tagID int PRIMARY KEY AUTO_INCREMENT,
-    nom varchar(255) UNIQUE-- on le mettra en unique pour éviter des doublons
+    nom varchar(255) PRIMARY KEY 
 );
 
 -- liaison entre recette & ingredient
@@ -46,11 +45,8 @@ CREATE TABLE recetteTag (
     FOREIGN KEY (recetteID)
     REFERENCES recette(recetteID),
 
-    tagID int,
-    FOREIGN KEY (tagID)
-    REFERENCES tag(tagID)
+    tagNom varchar(255), 
+    FOREIGN KEY (tagNom)
+    REFERENCES tag(nom) 
 
 );
-
-
-
