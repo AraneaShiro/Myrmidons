@@ -223,6 +223,46 @@ function rechercherTagsDansRecette($recetteID) {
 }
 }
 
+/**
+ * fonction qui donne les recettes qui possèdent tous les ingrédients des IngredientID donnés
+ */
+function rechercherRecettesAvecIngredients($tabIngredientsRechercheID) {
+
+    $allRecettes = $this->rechercherRecettesAll();
+
+    $tabRecetteValide = [];
+
+    foreach($allRecettes as $currentRecette) {
+
+        //tous les ingrédients de cette recette
+        $ingredientsRecette = $this->rechercherIngredientsDansRecette(  $currentRecette['recetteID']   );
+
+        //on garde juste les ID des ingredients dans la recette
+        $tabIngredientsID = array_column($ingredientsRecette, 'ingredientID');
+
+        $contientTout = true;
+
+        //chaque ingredient des ingredients recherchés
+        foreach($tabIngredientsRechercheID as $currentIngredientID) {
+
+            //si 1 des ingrédients est manquant
+            if(!in_array($currentIngredientID, $tabIngredientsID)) {
+                $contientTout = false;
+                break;
+            }
+
+        }
+
+        //si la recette possède tous les ingredients, on le rajoute
+        if($contientTout) $tabRecetteValide[] = $currentRecette;
+
+
+    }
+
+    return $tabRecetteValide;
+
+}
+
 /*
 --------------------
   * RECHERCHE ID *
