@@ -1,4 +1,5 @@
 <?php
+    ob_start(); // capture tout output (warnings, erreurs) avant les headers JSON
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -9,6 +10,69 @@
     session_start();
     $recherche = new RechercheForm();
     $addition = new AddContent();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        ob_clean(); // vide le buffer avant d'envoyer le JSON
+        // Sécurité pour que seul un admin connecté puisse modifier
+        if (!isset($_SESSION['nickname'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['succes' => false, 'message' => 'Non autorisé']);
+            exit();
+        }
+        // Supprimer une recette
+        if (isset($_POST['DeletedId'])) {
+            $id = intval($_POST['DeletedId']); // cast int
+            $resultat = $addition->deleteRecette($id);
+            header('Content-Type: application/json');
+            echo json_encode($resultat);
+            exit();
+        }
+        // Ajouter un tag 
+        if (isset($_POST['newTags']) && !isset($_POST['newTitle'])) {
+            $nom = htmlspecialchars($_POST['newTags']);
+            $resultat = $addition->addTag($nom);
+            header('Content-Type: application/json');
+            echo json_encode($resultat);
+            exit();
+        }
+        // Supprimer un tag 
+        if (isset($_POST['DeletedTags'])) {
+            $nom = htmlspecialchars($_POST['DeletedTags']);
+            $resultat = $addition->deleteTag($nom);
+            header('Content-Type: application/json');
+            echo json_encode($resultat);
+            exit();
+        }
+        // Ajouter un ingrédient
+        if (isset($_POST['NewIng'])) {
+            $nom      = htmlspecialchars($_POST['NewIng']);
+            $photo    = $addition->uploadPhoto('imgInputIng');
+            $resultat = $addition->addIngredient($nom, $photo);
+            header('Content-Type: application/json');
+            echo json_encode($resultat);
+            exit();
+        }
+        // Ajouter / Modifier une recette
+        if (isset($_POST['newTitle'])) {
+            $nom = htmlspecialchars($_POST['newTitle'] ?? '');
+            $texte     = htmlspecialchars($_POST['newDesc'] ?? '');
+            $idRecette = trim($_POST['newId'] ?? '');
+            $photo = $addition->uploadPhoto('imgFileInput');
+            if (!empty($idRecette)) {
+                // Modification d'une recette existante
+                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo);
+            } else {
+                // Nouvelle recette
+                $resultat = $addition->addRecette($nom, $texte, $photo);
+            }
+            header('Content-Type: application/json');
+            echo json_encode($resultat);
+            exit();
+        }
+        // POST non reconnu
+        header('Content-Type: application/json');
+        echo json_encode(['succes' => false, 'message' => 'Action inconnue']);
+        exit();
+    }
 ?>
 <?php ob_start() ?>
 <!-- Barre de recherche en haut-->

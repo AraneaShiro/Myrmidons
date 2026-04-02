@@ -19,7 +19,7 @@ class AddContent{
 
     // fonction pour generer le formulaire de suppression des tags
     public function generateTagDeleteForm(){
-        $tags = $this->db->rechercherIngredientAll();
+        $tags = $this->db->rechercherTagAll();
         
         echo '<div class="topFiltre"><label for="Tag">Tag</label><button class="btn btn-warning btn-sm" id="DeleteTag">-</button>
         </div>
@@ -47,37 +47,89 @@ class AddContent{
         '; 
     }
 
-
+    // fonction pour ajouter un tag à la base de données
     public function addTag($tag){
-        if($tag != ""){
+        if (!empty($tag)) {
             $this->db->ajouterTag($tag);
-        } else{
-            echo "<div id='error'>Tag vide !</div>";
+            return ['succes' => true, 'message' => 'Tag ajouté'];
         }
+        return ['succes' => false, 'message' => 'Tag vide !'];
     }
 
-    public function addIngredient($ingredient){
-        if($ingredient != ""){
+    // fonction pour supprimer un tag de la base de données
+    public function deleteTag($nom){
+        if (!empty($nom)) {
+            $this->db->supprimerTag($nom);
+            return ['succes' => true, 'message' => 'Tag supprimé'];
+        }
+        return ['succes' => false, 'message' => 'Aucun tag sélectionné'];
+    }
+
+    // fonction pour ajouter un ingredient à la base de données
+    public function addIngredient($ingredient, $photo = ''){
+        if (!empty($ingredient)) {
+            if (empty($photo)) {
+                return ['succes' => false, 'message' => 'Photo de l\'ingrédient manquante !'];
+            }
             $this->db->ajouterIngredient($ingredient);
-        } else{
-            echo "<div id='error'>Ingredient vide !</div>";
+            if (!empty($photo)) {
+                $ing = $this->db->rechercherIngredientAll();
+                foreach ($ing as $i) {
+                    if ($i['nom'] === $ingredient) {
+                        $this->db->modifierIngredient($i['ingredientID'], $ingredient, $photo);
+                        break;
+                    }
+                }
+            }
+            return ['succes' => true, 'message' => 'Ingrédient ajouté'];
         }
+        return ['succes' => false, 'message' => 'Ingrédient vide !'];
     }
 
-    public function addRecette($recette, $texteRecette, $photoRecette){
-        if($recette != "" && $texteRecette != "" && $photoRecette != ""){
-            $this->db->ajouterRecette($recette, $texteRecette, $photoRecette);
-        } else{
-            if($recette ==""){
-                echo "<div id='error'>Nom de recette vide !</div>";
-            }
-            if($photoRecette == ""){
-                echo "<div id='error'>Entrez un fichier!</div>";
-            }
-            if($texteRecette=""){
-                echo "<div id='error'>Description vide !</div>";
-            }
+    // fonction pour ajouter une recette à la base de données
+    public function addRecette($nom, $texte, $photo = ''){
+        if (empty($nom)) {
+            return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
+        if (empty($texte)) {
+            return ['succes' => false, 'message' => 'Description vide !'];
+        }
+        if (empty($photo)) {
+            return ['succes' => false, 'message' => 'Photo de la recette manquante !'];
+        }
+        $this->db->ajouterRecette($nom, $texte, $photo);
+        return ['succes' => true, 'message' => 'Recette ajoutée'];
+    }
+
+    // fonction pour modifier une recette existante dans la base de données
+    public function modifierRecette($id, $nom, $texte, $photo){
+        if (empty($nom)) {
+            return ['succes' => false, 'message' => 'Nom de recette vide !'];
+        }
+        $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
+        return ['succes' => true, 'message' => 'Recette modifiée'];
+    }
+
+    // fonction pour supprimer une recette dans la base de données
+    public function deleteRecette($id){
+        if (empty($id)) {
+            return ['succes' => false, 'message' => 'ID manquant'];
+        }
+        $this->db->supprimerRecette(intval($id));
+        return ['succes' => true, 'message' => 'Recette supprimée'];
+    }
+
+    // fonction pour gestion de l'upload d'une photo
+    public function uploadPhoto($fileKey){
+        if (!empty($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] == 0) {
+            $file       = $_FILES[$fileKey];
+            $dirImg     = "../image/";
+            if (!is_dir($dirImg)) mkdir($dirImg); // crée le dossier si besoin
+            $nomFichier = basename($file['name']); // sécurise le nom
+            move_uploaded_file($file['tmp_name'], $dirImg . $nomFichier);
+            return $nomFichier;
+        }
+        return '';
     }
 
     //Fonction qui genere l'input de l image pour la recette
@@ -105,7 +157,7 @@ class AddContent{
 
     // fonction qui genere le formulaire pour ajouter des tags à une recette lors de sa creation
     public function generateTagListAdd(){
-        $tags = $this->db->rechercherIngredientAll();
+        $tags = $this->db->rechercherTagAll();
         echo   '<label>Tags</label>
                 <div class="tags-row" id="tagsRow">
                     <span>Aucun tag ajouté</span>
@@ -115,7 +167,7 @@ class AddContent{
                     <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
-            $id = htmlspecialchars($tag['id']);
+            $id = htmlspecialchars($tag['tagID']);
             echo "<option value=\"{$id}\">{$nom}</option>";
         }
         echo '</select>
@@ -136,7 +188,7 @@ class AddContent{
                 <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
         foreach ($ingredients as $ingredient){ 
             $nom = htmlspecialchars($ingredient['nom']);
-            $id = htmlspecialchars($ingredient['id']);
+            $id = htmlspecialchars($ingredient['ingredientID']);
             echo "<option value=\"{$id}\">{$nom}</option>";
         }
         echo '</select>
