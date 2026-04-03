@@ -79,9 +79,15 @@ document.addEventListener('DOMContentLoaded', function () {
         params.push("search=" + encodeURIComponent(searchValue));
     }
 
+    let ingT = tabIng.join(",");
+    let tagT = tabTag.join(",");
     // Ingrédients et tags
-    tabIng.forEach(ing => params.push("ingredients[]=" + encodeURIComponent(ing)));
-    tabTag.forEach(tag => params.push("tags[]=" + encodeURIComponent(tag)));
+    //tabIng.forEach(ing => params.push("ingredients[]=" + encodeURIComponent(ing)));
+    //tabTag.forEach(tag => params.push("tags[]=" + encodeURIComponent(tag)));
+    params.push("ingredients=" + encodeURIComponent(ingT));
+params.push("tags=" + encodeURIComponent(tagT));
+
+
 
     // On concatène tous les paramètres
     let request = url + "?" + params.join("&");
