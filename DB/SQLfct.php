@@ -689,52 +689,54 @@ class SQLfct
 
     }
 
-/**
- * fonction qui enleve toutes les liaisons d'une recette donnée
- */
-function delierToutesLesLiaisonsRecette($recetteID) {
+    /**
+     * fonction qui enleve toutes les liaisons d'une recette donnée
+     */
+    function delierToutesLesLiaisonsRecette($recetteID)
+    {
 
-    try{
-        //supprimer ingredient liens
-        $queryIngredient = "DELETE FROM recetteIngredient WHERE recetteID = :recetteID";
+        try {
+            //supprimer ingredient liens
+            $queryIngredient = "DELETE FROM recetteIngredient WHERE recetteID = :recetteID";
             $statement = $this->pdo->prepare($queryIngredient);
             $statement->bindValue(':recetteID', $recetteID);
             $statement->execute();
-            
-        //supprimer tag liens
-        $queryTag = "DELETE FROM recetteTag WHERE recetteID = :recetteID";
-        $statement = $this->pdo->prepare($queryTag);
-        $statement->bindValue(':recetteID', $recetteID);
-        $statement->execute();
 
-    } catch(\Exception $ex) {
-        die("Erreur suppression liaisons recette : " . $ex->getMessage());
+            //supprimer tag liens
+            $queryTag = "DELETE FROM recetteTag WHERE recetteID = :recetteID";
+            $statement = $this->pdo->prepare($queryTag);
+            $statement->bindValue(':recetteID', $recetteID);
+            $statement->execute();
+
+        } catch (\Exception $ex) {
+            die("Erreur suppression liaisons recette : " . $ex->getMessage());
+        }
+
     }
 
-}
+    /**
+     * fonction qui enleve toutes les liaisons dune recette donnée
+     */
+    function delierToutesLesLiaisonsTag($tagNom)
+    {
 
-/**
- * fonction qui enleve toutes les liaisons dune recette donnée
- */
-function delierToutesLesLiaisonsTag($tagNom) {
+        try {
+            $query = "DELETE FROM recetteTag WHERE tagNom = :tagNom";
+            $statement = $this->pdo->prepare($query);
+            $statement->bindValue(':tagNom', $tagNom);
+            $statement->execute();
 
-    try {
-        $query = "DELETE FROM recetteTag WHERE tagNom = :tagNom";
-        $statement = $this->pdo->prepare($query);
-        $statement->bindValue(':tagNom', $tagNom);
-        $statement->execute();
-        
-    } catch(\Exception $ex) {
-        die("Erreur suppression liaisons tag : " . $ex->getMessage());
+        } catch (\Exception $ex) {
+            die("Erreur suppression liaisons tag : " . $ex->getMessage());
+        }
+
     }
 
-}
-
-/*
-----------------
-  * MODIFIER *  
-----------------
-*/
+    /*
+    ----------------
+      * MODIFIER *  
+    ----------------
+    */
 
     function modifierRecette($recetteID, $nom, $texte, $photo)
     {
@@ -901,5 +903,4 @@ function delierToutesLesLiaisonsTag($tagNom) {
     }
 
 
-
-
+}
