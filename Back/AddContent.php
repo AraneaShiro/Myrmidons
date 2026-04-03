@@ -24,8 +24,7 @@ class AddContent{
         echo '<div class="topFiltre"><label for="Tag">Tag</label><button class="btn btn-warning btn-sm" id="DeleteTag">-</button>
         </div>
         <select name="tagSelection" id="tagDeleteSelection">
-        <option value="" disabled selected>-- Choisir un tag --</option>
-        <option value="test" class="TagSelect"> test</option>'; //Ligne pour les tests
+        <option value="" disabled selected>-- Choisir un tag --</option>';
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
             echo "<option value=\"{$nom}\">{$nom}</option>";
@@ -102,11 +101,19 @@ class AddContent{
     }
 
     // fonction pour modifier une recette existante dans la base de données
-    public function modifierRecette($id, $nom, $texte, $photo){
+    public function modifierRecette($id, $nom, $texte, $photo, $ingredient, $tags){
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
         $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
+        foreach ($tags as $tag) {
+            $tagid = $tag['nom'];
+            $this->db->lierRecetteTag($id,$tagid);
+        }
+        foreach ($ingredient as $ing) {
+            $ingid = $ing['ingredientID'];
+            $this->db->lierRecetteIngredient($id, $ingid);
+        }
         return ['succes' => true, 'message' => 'Recette modifiée'];
     }
 
@@ -162,12 +169,10 @@ class AddContent{
                     <span>Aucun tag ajouté</span>
                 </div>
                 <select id="tagInput">
-                    <option value="" disabled selected>-- Choisir un tag --</option>
-                    <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
+                    <option value="" disabled selected>-- Choisir un tag --</option>';
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
-            $id = htmlspecialchars($tag['id']);
-            echo "<option value=\"{$id}\">{$nom}</option>";
+            echo "<option value=\"{$nom}\">{$nom}</option>";
         }
         echo '</select>
             <button class="btn-add-tag" id="btnAddTag">+ Ajouter</button>
@@ -183,12 +188,10 @@ class AddContent{
         <label>Liste Ingrédients</label>
         <div class="ing-grid" id="ingGrid"></div>
         <select id="ingSelect">
-                <option value="" disabled selected>-- Choisir un ingrédient --</option>
-                <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
+                <option value="" disabled selected>-- Choisir un ingrédient --</option>';
         foreach ($ingredients as $ingredient){ 
             $nom = htmlspecialchars($ingredient['nom']);
-            $id = htmlspecialchars($ingredient['id']);
-            echo "<option value=\"{$id}\">{$nom}</option>";
+            echo "<option value=\"{$nom}\">{$nom}</option>";
         }
         echo '</select>
             <button class="btn-add-ing btn" id="btnAddIng">+ Ajouter un ingrédient</button>

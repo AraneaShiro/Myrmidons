@@ -77,7 +77,7 @@
             echo json_encode([
                 'debug_post'  => $_POST,
                 'debug_files' => $_FILES,
-                'photo'       => $photo
+                'photo' => $photo
             ]);
             exit();
         }
@@ -85,12 +85,14 @@
         // Ajouter / Modifier une recette
         if (isset($_POST['newTitle'])) {
             $nom = htmlspecialchars($_POST['newTitle'] ?? '');
-            $texte = htmlspecialchars($_POST['newIngredients'] ?? '');
+            $texte = htmlspecialchars($_POST['newDesc'] ?? '');
             $idRecette = trim($_POST['newId'] ?? '');
             $photo = $addition->uploadPhoto('imgFileInput');
+            $ingredients = $_POST['newIngredients'];
+            $tags = $_POST['newTags'];
             if (!empty($idRecette)) {
                 // Modification d'une recette existante
-                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo);
+                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo, $ingredients, $tags);
             } else {
                 // Nouvelle recette
                 $resultat = $addition->addRecette($nom, $texte, $photo);
