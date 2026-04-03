@@ -13,7 +13,7 @@
     $recherche = new RechercheForm();
     $addition = new AddContent();
     $recette = new Recette();
-    
+    $recettesAll = $recette->db->rechercherRecettesAll();
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ob_clean(); // vide le buffer avant d'envoyer le JSON
 
@@ -186,7 +186,12 @@
 
 
             <?php $addition->generateRecetteAddForm() ?>
-            <?php $recette->generateRecetteCard(1)?>
+            <?php 
+                foreach($recettesAll as $recettes) {
+                    $id = $recettes['recetteID'];
+                    $recette->generateRecetteCard($id);
+                }
+            ?>
         </div>
     </div>
 </div>

@@ -528,14 +528,14 @@ AddRecetteButton.addEventListener("click", function () {    //Ajout d'une recett
         const image = card.querySelector('.card__image img').src;
         const description = card.querySelector('.card__desc p').textContent;
         let IDRecette = card.querySelector('.IdRecette').textContent;
-        console.log(IDRecette)
+        
         const tags=[];
     
-
-        card.querySelectorAll(".tags-row .tag").forEach(tag => {
+        
+        card.querySelectorAll(".tags-row p").forEach(tag => {
             tags.push(tag.textContent.trim());
         });
-
+console.log(tags)
         let ingredients = [];
         card.querySelectorAll('.card__list ul li').forEach(li => {
             ingredients.push(li.textContent.trim());
@@ -564,44 +564,38 @@ AddRecetteButton.addEventListener("click", function () {    //Ajout d'une recett
         // Cache le placeholder
         document.getElementById('imgPlaceholder').style.display = 'none';
 
+        // Tags — réinitialisation et rendu AVANT le forEach ingrédients
+        tabTags = []
+        tags.forEach(tag => tabTags.push(tag))
+        renderTags()
+
         // Ingrédients
         const ingGrid = document.getElementById('ingGrid');
-        ingGrid.innerHTML = ''; // reset)
+        ingGrid.innerHTML = '';
+        tabIngs = [] // reset avant de remplir
         ingredients.forEach(ing => {
             let name = ing
-        if (tabIngs.includes(name)) {
-            showError('errIng', true, 'Cet ingrédient est déjà ajouté.')
-            return
-        }
-        tabIngs.push(name)
+            if (tabIngs.includes(name)) return
 
-       
-        // Tags
-        const tagRow = document.getElementById("tagsRow");
-        tagRow.innerHTML = '';
-        tabTags = []; // réinitialise tabTags pour éviter doublons
-        tags.forEach(tag => {
-            tabTags.push(tag);
-        });
-        renderTags(); // <-- appelé une seule fois
-        
-        let item = document.createElement('div')
-        item.className = 'ing-item'
-        item.innerHTML = `
-            <span>${name}</span>
-            <button title="Supprimer">×</button>
-        `
-        item.querySelector('button').onclick = () => {
-            tabIngs = tabIngs.filter(i => i !== name)
-            item.remove()
-            showError('errIng', false)
-        }
-        ingGrid.appendChild(item)
+            tabIngs.push(name)
+
+            let item = document.createElement('div')
+            item.className = 'ing-item'
+            item.innerHTML = `
+                <span>${name}</span>
+                <button title="Supprimer">×</button>
+            `
+            item.querySelector('button').onclick = () => {
+                tabIngs = tabIngs.filter(i => i !== name)
+                item.remove()
+                showError('errIng', false)
+            }
+            ingGrid.appendChild(item)
+        })
 
         ingSelect.value = ''
         selectedRecIng = null
         showError('errIng', false)
-        });
 
         // =========================
         //  UI
