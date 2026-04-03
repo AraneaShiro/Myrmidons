@@ -265,6 +265,7 @@ tagButton.hover {
     display: none;
     position: absolute;
     z-index: 9999;
+    /*Pour l'affichage au dessus*/
     background: white;
     border: 1px solid #ccc;
     border-radius: 8px;

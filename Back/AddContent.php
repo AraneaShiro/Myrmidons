@@ -120,14 +120,15 @@ class AddContent
     }
 
     // fonction pour modifier une recette existante dans la base de données
-    public function modifierRecette($id, $nom, $texte, $photo, $ingredient, $tags){
+    public function modifierRecette($id, $nom, $texte, $photo, $ingredient, $tags)
+    {
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
         $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
         foreach ($tags as $tag) {
             $tagid = $tag['nom'];
-            $this->db->lierRecetteTag($id,$tagid);
+            $this->db->lierRecetteTag($id, $tagid);
         }
         foreach ($ingredient as $ing) {
             $ingid = $ing['ingredientID'];
@@ -206,7 +207,7 @@ class AddContent
         foreach ($tags as $tag) {
             $nom = htmlspecialchars($tag['nom']);
 
-            echo "<li data-value=>{$nom}</li>";
+            echo "<li data-value=\"{$nom}\">{$nom}</li>";
         }
         echo '  </ul>
                 </div>
@@ -235,7 +236,7 @@ class AddContent
         foreach ($ingredients as $ingredient) {
             $nom = htmlspecialchars($ingredient['nom']);
 
-            echo "<li data-value=>{$nom}</li>";
+            echo "<li data-value=\"{$nom}\">{$nom}</li>";
         }
         echo '  </ul>
         </div>
@@ -278,7 +279,7 @@ class AddContent
                     <div class="tags-section">
                         <label>Tags</label>
                         <div class="tags-row" id="tagsRow">
-                            <span>Aucun tag ajouté</span>
+                
                         </div>
                         <div class="tag-add-row">';
         $this->generateTagListAdd();

@@ -79,7 +79,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     transition: border-color .2s;
     position: relative;
 }
@@ -123,7 +122,6 @@
     padding: 8px 12px;
 
     font-size: 0.82rem;
-    cursor: pointer;
     text-align: center;
     transition: background .2s;
 }
@@ -171,7 +169,6 @@
     background: none;
     border: none;
     color: var(--error);
-    cursor: pointer;
     font-size: 1rem;
     line-height: 1;
     padding: 0;
@@ -191,8 +188,6 @@
     font-family: 'DM Sans', sans-serif;
     padding: 6px 12px;
     font-size: 0.85rem;
-    outline: none;
-    flex: 1;
     transition: border-color .2s;
 }
 
@@ -216,7 +211,6 @@
     font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     padding: 6px 14px;
-    cursor: pointer;
     font-size: 0.85rem;
     transition: opacity .2s;
 }
@@ -282,7 +276,6 @@
 .ing-item button {
     background: none;
     border: none;
-    cursor: pointer;
     color: var(--error);
     font-size: 1rem;
     padding: 0;
@@ -301,7 +294,7 @@
     color: black;
 
     padding: 10px;
-    cursor: pointer;
+
     font-size: 0.85rem;
     transition: background .2s;
     text-align: center;
@@ -377,23 +370,4 @@
     padding: 14px 40px;
     cursor: pointer;
     transition: transform .15s, opacity .2s;
-}
-
-.btn-submit:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-}
-
-@media (max-width: 640px) {
-    .main-content {
-        grid-template-columns: 1fr;
-    }
-
-    .image-preview {
-        width: 100%;
-    }
-
-    .ing-grid {
-        grid-template-columns: 1fr;
-    }
 }
