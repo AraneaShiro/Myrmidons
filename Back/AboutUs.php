@@ -61,9 +61,19 @@ unset($_SESSION['login_error']); // Supprimer l'erreur après l'avoir récupér�
 
         <div class="textProfile">
             <p>
-                Je suis recherché a cause de mon pseudo.
+                💗 ✨Je m’adresse à tous les otakus✨💗
+                <br>
+                🌍 ✨Un jour on quittera ce monde✨ 🌍
+                <br>
+                🌸✨Et on vivra dans le monde des animés✨ 🌸
+                <br>
+                💔✨On nous a dit d’arrêter de rêver...✨ 💔
+                <br>
+                🖇️✨Mais on abandonnera jamais ✨🖇️
+                <br>
+                💖✨Parce qu’on est des FAN D’ANIMÉS !!✨💖
             </p>
-            <p>Le responsable de la Base de donnée (Maxence)</p>
+            <p>Le responsable de la Base de données (Maxence)</p>
         </div>
 
 
