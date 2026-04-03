@@ -40,8 +40,7 @@ class RechercheForm{
             <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
         foreach ($ingredients as $ingredient){
             $nom = htmlspecialchars($ingredient['nom']);
-            $id = htmlspecialchars($ingredient['id']);
-            echo "<option value=\"{$id}\">{$nom}</option>";
+            echo "<option value=\"{$nom}\">{$nom}</option>";
         }
 
         echo '</select>';
@@ -58,8 +57,7 @@ class RechercheForm{
         <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
         foreach ($tags as $tag){
             $nom = htmlspecialchars($tag['nom']);
-            $id = htmlspecialchars($tag['id']);
-            echo "<option value=\"{$id}\">{$nom}</option>";
+            echo "<option value=\"{$nom}\">{$nom}</option>";
         }
         echo '</select>';
     }

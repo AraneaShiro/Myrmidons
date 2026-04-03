@@ -274,10 +274,15 @@ document.addEventListener('DOMContentLoaded', function () {
          
 
             let data= new FormData()
-            data.append("newTitle",inputTitle)
+            data.append("newTitle",inputTitle.value)
             data.append("newTags",tabTags)
+            data.append("newDesc", inputDesc.value)
             data.append("newIngredients",tabIngs)
             data.append("newId",id.innerText)
+
+            if (imgFileInput.files[0]) {
+                data.append("imgFileInput", imgFileInput.files[0])
+            }
 
             let options ={
                 method :'POST',
@@ -400,7 +405,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let data= new FormData()
             
-            data.append("NewIng",fileInput_NewIng.value)
+            data.append("NewIng", input_NewIng.value)
+            data.append("imgInputIng", fileInput_NewIng.files[0]) 
    
             let options ={
                 method :'POST',
