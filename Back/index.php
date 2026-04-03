@@ -8,16 +8,37 @@
     require_once "RechercheForm.php";
     require_once "AddContent.php";
     session_start();
+    
     $recherche = new RechercheForm();
     $addition = new AddContent();
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ob_clean(); // vide le buffer avant d'envoyer le JSON
-        // Sécurité pour que seul un admin connecté puisse modifier
+
+        // Traitement du login (username + password)
+        if (isset($_POST['username']) && isset($_POST['password'])) {
+            $logger = new AdminLogger();
+            $result = $logger->log($_POST['username'], $_POST['password']);
+            if($result['granted']){
+                $_SESSION['nickname'] = $result['username'];
+                // Rediriger pour éviter la resoumission du formulaire
+                header("Location: index.php");
+                exit();
+            } else {
+                // Stocker l'erreur en session pour l'afficher dans le formulaire
+                $_SESSION['login_error'] = $result['error'];
+                header("Location: index.php");
+                exit();
+            }
+        }
+        
+        // Sécurité : tous les autres POST nécessitent d'être admin connecté
         if (!isset($_SESSION['nickname'])) {
             header('Content-Type: application/json');
             echo json_encode(['succes' => false, 'message' => 'Non autorisé']);
             exit();
         }
+        
         // Supprimer une recette
         if (isset($_POST['DeletedId'])) {
             $id = intval($_POST['DeletedId']); // cast int
@@ -26,6 +47,7 @@
             echo json_encode($resultat);
             exit();
         }
+        
         // Ajouter un tag 
         if (isset($_POST['newTags']) && !isset($_POST['newTitle'])) {
             $nom = htmlspecialchars($_POST['newTags']);
@@ -34,6 +56,7 @@
             echo json_encode($resultat);
             exit();
         }
+        
         // Supprimer un tag 
         if (isset($_POST['DeletedTags'])) {
             $nom = htmlspecialchars($_POST['DeletedTags']);
@@ -42,19 +65,25 @@
             echo json_encode($resultat);
             exit();
         }
+        
         // Ajouter un ingrédient
         if (isset($_POST['NewIng'])) {
             $nom      = htmlspecialchars($_POST['NewIng']);
             $photo    = $addition->uploadPhoto('imgInputIng');
-            $resultat = $addition->addIngredient($nom, $photo);
+            // DEBUG temporaire : renvoie ce que PHP reçoit directement dans le JSON
             header('Content-Type: application/json');
-            echo json_encode($resultat);
+            echo json_encode([
+                'debug_post'  => $_POST,
+                'debug_files' => $_FILES,
+                'photo'       => $photo
+            ]);
             exit();
         }
+        
         // Ajouter / Modifier une recette
         if (isset($_POST['newTitle'])) {
             $nom = htmlspecialchars($_POST['newTitle'] ?? '');
-            $texte     = htmlspecialchars($_POST['newDesc'] ?? '');
+            $texte = htmlspecialchars($_POST['newIngredients'] ?? '');
             $idRecette = trim($_POST['newId'] ?? '');
             $photo = $addition->uploadPhoto('imgFileInput');
             if (!empty($idRecette)) {
@@ -68,11 +97,16 @@
             echo json_encode($resultat);
             exit();
         }
+        
         // POST non reconnu
         header('Content-Type: application/json');
         echo json_encode(['succes' => false, 'message' => 'Action inconnue']);
         exit();
     }
+    
+    // Récupérer l'erreur de login pour l'afficher si elle existe
+    $login_error = isset($_SESSION['login_error']) ? $_SESSION['login_error'] : null;
+    unset($_SESSION['login_error']); // Supprimer l'erreur après l'avoir récupérée
 ?>
 <?php ob_start() ?>
 <!-- Barre de recherche en haut-->
