@@ -205,7 +205,7 @@ function rechercherIngredientsDansRecette($recetteID) {
 function rechercherTagsDansRecette($recetteID) {
     try{
     $query =    "SELECT * FROM tag
-                JOIN recetteTag ON recetteTag.tagNom = tag.tagNom
+                JOIN recetteTag ON recetteTag.tagNom = tag.nom
                 WHERE recetteTag.recetteID = :recetteID
                 ORDER BY tag.nom DESC" ;
       

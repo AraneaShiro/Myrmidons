@@ -55,8 +55,8 @@ CREATE TABLE recetteTag (
 /* implementation test */
 
 INSERT INTO recette (nom, texte, photo) VALUES 
-("Pate bolo", "Ceci est une recette de pate bolo", "../images/bolo.jpg"),
-("Sushi", "Ceci est une recette de Sushi", "../images/sushi.jpg");
+("Pate bolo", "Ceci est une recette de pate bolo", "../image/bolo.jpg"),
+("Sushi", "Ceci est une recette de Sushi", "../image/sushi.jpg");
 
 
 INSERT INTO ingredient (nom, photo) VALUES 
