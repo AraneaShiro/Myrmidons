@@ -2,15 +2,18 @@
 
 require_once "../DB/SQLfct.php";
 //classe pour ajouter des contenus (recettes / tags / ingrédients)
-class AddContent{
+class AddContent
+{
     private $db;
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new SQLfct();
     }
 
 
     // fonction pour generer le formulaire d'ajout de tags
-    public function generateTagAdditionForm(){
+    public function generateTagAdditionForm()
+    {
         echo '<div class="topFiltre"><label for="NamenewTag">Nouveau Tag</label><button class="btn" id="AddNewTag">+</button></div>
         
             <input type="text" id="NewTagInput" class="form-control">
@@ -18,24 +21,34 @@ class AddContent{
     }
 
     // fonction pour generer le formulaire de suppression des tags
-    public function generateTagDeleteForm(){
+    public function generateTagDeleteForm()
+    {
         $tags = $this->db->rechercherTagAll();
-        
+
         echo '<div class="topFiltre"><label for="Tag">Tag</label><button class="btn btn-warning btn-sm" id="DeleteTag">-</button>
         </div>
-        <select name="tagSelection" id="tagDeleteSelection">
-        <option value="" disabled selected>-- Choisir un tag --</option>
-        <option value="test" class="TagSelect"> test</option>'; //Ligne pour les tests
-        foreach ($tags as $tag){
+        <div class="customDropdownWrapper">
+            <input
+                type="text"
+                id="tagDeleteFilter"
+                class="form-control"
+                placeholder="Rechercher un tag..."
+                autocomplete="off"
+            >
+            <ul id="tagDeleteList" class="dropdownList">';
+        foreach ($tags as $tag) {
             $nom = htmlspecialchars($tag['nom']);
-            echo "<option value=\"{$nom}\">{$nom}</option>";
+            echo "<li data-value=\"{$nom}\">{$nom}</li>";
         }
-        echo '</select>
+        echo '
+            </ul>
+        </div>
         ';
     }
 
     // fonction pour generer le formulaire d'ajout d'ingrédient
-    public function generateIngredientAddForm(){
+    public function generateIngredientAddForm()
+    {
         echo '
         <div class="input-group mb-3 topFiltre">
         <label for="NamenewIng" class="input-group-text">Nouvel Ingredient</label>
@@ -44,20 +57,22 @@ class AddContent{
                     <input type="text" id="NewIngIput" placeholder="Tomate">
                     <input type="file" class="form-control" id="imgInputIng" name="imgInputIng">
                     
-        '; 
+        ';
     }
 
 
-    public function addTag($tag){
-        if($tag != ""){
+    public function addTag($tag)
+    {
+        if ($tag != "") {
             $this->db->ajouterTag($tag);
-        } else{
+        } else {
             echo "<div id='error'>Tag vide !</div>";
         }
     }
 
     // fonction pour supprimer un tag de la base de données
-    public function deleteTag($nom){
+    public function deleteTag($nom)
+    {
         if (!empty($nom)) {
             $this->db->supprimerTag($nom);
             return ['succes' => true, 'message' => 'Tag supprimé'];
@@ -66,7 +81,8 @@ class AddContent{
     }
 
     // fonction pour ajouter un ingredient à la base de données
-    public function addIngredient($ingredient, $photo = ''){
+    public function addIngredient($ingredient, $photo = '')
+    {
         if (!empty($ingredient)) {
             if (empty($photo)) {
                 return ['succes' => false, 'message' => 'Photo de l\'ingrédient manquante !'];
@@ -87,7 +103,8 @@ class AddContent{
     }
 
     // fonction pour ajouter une recette à la base de données
-    public function addRecette($nom, $texte, $photo = ''){
+    public function addRecette($nom, $texte, $photo = '')
+    {
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
@@ -102,7 +119,8 @@ class AddContent{
     }
 
     // fonction pour modifier une recette existante dans la base de données
-    public function modifierRecette($id, $nom, $texte, $photo){
+    public function modifierRecette($id, $nom, $texte, $photo)
+    {
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
@@ -111,7 +129,8 @@ class AddContent{
     }
 
     // fonction pour supprimer une recette dans la base de données
-    public function deleteRecette($id){
+    public function deleteRecette($id)
+    {
         if (empty($id)) {
             return ['succes' => false, 'message' => 'ID manquant'];
         }
@@ -120,11 +139,13 @@ class AddContent{
     }
 
     // fonction pour gestion de l'upload d'une photo
-    public function uploadPhoto($fileKey){
+    public function uploadPhoto($fileKey)
+    {
         if (!empty($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] == 0) {
-            $file       = $_FILES[$fileKey];
-            $dirImg     = "../image/";
-            if (!is_dir($dirImg)) mkdir($dirImg); // crée le dossier si besoin
+            $file = $_FILES[$fileKey];
+            $dirImg = "../image/";
+            if (!is_dir($dirImg))
+                mkdir($dirImg); // crée le dossier si besoin
             $nomFichier = basename($file['name']); // sécurise le nom
             move_uploaded_file($file['tmp_name'], $dirImg . $nomFichier);
             return $nomFichier;
@@ -132,8 +153,9 @@ class AddContent{
     }
 
     //Fonction qui genere l'input de l image pour la recette
-    public function generateImgForm(){
-    echo '<div class="image-zone">
+    public function generateImgForm()
+    {
+        echo '<div class="image-zone">
         <div class="image-preview" id="imagePreview"
             onclick="document.getElementById(\'imgFileInput\').click()">
             <div class="image-placeholder" id="imgPlaceholder">
@@ -151,54 +173,72 @@ class AddContent{
             Choisir une image</button>
         <div class="error-msg" id="errImg">Veuillez sélectionner une image valide.</div>
     </div>';
-}
+    }
 
 
     // fonction qui genere le formulaire pour ajouter des tags à une recette lors de sa creation
-    public function generateTagListAdd(){
+    public function generateTagListAdd()
+    {
         $tags = $this->db->rechercherTagAll();
-        echo   '<label>Tags</label>
+        echo '<label>Tags</label>
                 <div class="tags-row" id="tagsRow">
                     <span>Aucun tag ajouté</span>
                 </div>
-                <select id="tagInput">
-                    <option value="" disabled selected>-- Choisir un tag --</option>
-                    <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
-        foreach ($tags as $tag){
+                <div class="customDropdownWrapper">
+                    <input
+                        type="text"
+                        id="tagInput"
+                        class="form-control"
+                        placeholder="Rechercher un tag..."
+                        autocomplete="off"
+                    >
+                    <ul id="tagInputList" class="dropdownList">
+                        <li data-value="test">test</li>';
+        foreach ($tags as $tag) {
             $nom = htmlspecialchars($tag['nom']);
-            $id = htmlspecialchars($tag['id']);
-            echo "<option value=\"{$id}\">{$nom}</option>";
+
+            echo "<li data-value=>{$nom}</li>";
         }
-        echo '</select>
-            <button class="btn-add-tag" id="btnAddTag">+ Ajouter</button>
-            
+        echo '  </ul>
+                </div>
+                <button class="btn-add-tag" id="btnAddTag">+ Ajouter</button>
             ';
     }
 
-        // fonction qui genere le formulaire pour ajouter des ingredients à une recette lors de sa creation
+    // fonction qui genere le formulaire pour ajouter des ingredients à une recette lors de sa creation
 
-    public function generateIngredientList(){
+    public function generateIngredientList()
+    {
         $ingredients = $this->db->rechercherIngredientAll();
-        echo'
+        echo '
         <label>Liste Ingrédients</label>
         <div class="ing-grid" id="ingGrid"></div>
-        <select id="ingSelect">
-                <option value="" disabled selected>-- Choisir un ingrédient --</option>
-                <option value="test" class="TagSelect"> test</option>';//Ligne pour les tests
-        foreach ($ingredients as $ingredient){ 
+        <div class="customDropdownWrapper">
+            <input
+                type="text"
+                id="ingSelect"
+                class="form-control"
+                placeholder="Rechercher un ingrédient..."
+                autocomplete="off"
+            >
+            <ul id="ingSelectList" class="dropdownList">
+                <li data-value="test">test</li>';
+        foreach ($ingredients as $ingredient) {
             $nom = htmlspecialchars($ingredient['nom']);
-            $id = htmlspecialchars($ingredient['id']);
-            echo "<option value=\"{$id}\">{$nom}</option>";
+
+            echo "<li data-value=>{$nom}</li>";
         }
-        echo '</select>
+        echo '  </ul>
+        </div>
             <button class="btn-add-ing btn" id="btnAddIng">+ Ajouter un ingrédient</button>
             <div class="error-msg" id="errIng">Ajoutez au moins un ingrédient.</div>
         ';
     }
- 
-        // fonction qui genere le formulaire pour ajouter la description à une recette lors de sa creation
 
-    public function generateDescriptionForm(){
+    // fonction qui genere le formulaire pour ajouter la description à une recette lors de sa creation
+
+    public function generateDescriptionForm()
+    {
         echo '<div class="desc-section" id="descSection">
                         <label>Description</label>
                         <textarea id="inputDesc" placeholder="Décrivez votre recette..." rows="4"></textarea>
@@ -208,7 +248,8 @@ class AddContent{
 
     //     // fonction qui genere le formulaire de creation d'une recette
 
-    public function generateRecetteAddForm(){
+    public function generateRecetteAddForm()
+    {
         echo '<!-- TITRE -->
         <div class="page" id="FormRecette">
                 <div class="recipe-title-wrap">
@@ -250,6 +291,6 @@ class AddContent{
             <div class="submit-row">
             <button class="btn-submit btn" id="btnSubmit">Enregistrer la recette</button>
             </div> </div>'
-            ;
+        ;
     }
 }

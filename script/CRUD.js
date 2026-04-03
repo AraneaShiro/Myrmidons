@@ -5,10 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let showing=false
 
     // ── Éléments Tag Admin ────────────────────────────────────────
-    let button_deleteTag  = document.getElementById("DeleteTag")
-    let button_addNewTag  = document.getElementById("AddNewTag")
-    let select_DeleteTag  = document.getElementById("tagDeleteSelection")
-    let input_NewTag      = document.getElementById("NewTagInput")
+    let button_deleteTag    = document.getElementById("DeleteTag")
+    let button_addNewTag    = document.getElementById("AddNewTag")
+    let input_NewTag        = document.getElementById("NewTagInput")
+    // Dropdown custom suppression tag
+    let tagDeleteFilter     = document.getElementById("tagDeleteFilter")
+    let tagDeleteList       = document.getElementById("tagDeleteList")
+    let selectedDeleteTag   = null
 
     // ── Éléments Ingrédient Admin ─────────────────────────────────
     let input_NewIng      = document.getElementById("NewIngIput")
@@ -23,20 +26,66 @@ document.addEventListener('DOMContentLoaded', function () {
     let imgFileInput   = document.getElementById('imgFileInput')
     let imagePreview   = document.getElementById('imagePreview')
     let imgPlaceholder = document.getElementById('imgPlaceholder')
-    let tagInput       = document.getElementById('tagInput')      // <select> peuplé par PHP
-    let btnAddTag      = document.getElementById('btnAddTag')
-    let tagsRow        = document.getElementById('tagsRow')
-    let ingGrid        = document.getElementById('ingGrid')
-    let ingSelect      = document.getElementById('ingSelect')     // <select> peuplé par PHP
-    let btnAddIng      = document.getElementById('btnAddIng')
+    let tagInput        = document.getElementById('tagInput')       // input du dropdown custom
+    let tagInputList    = document.getElementById('tagInputList')   // ul du dropdown custom
+    let selectedRecTag  = null
+    let btnAddTag       = document.getElementById('btnAddTag')
+    let tagsRow         = document.getElementById('tagsRow')
+    let ingGrid         = document.getElementById('ingGrid')
+    let ingSelect       = document.getElementById('ingSelect')      // input du dropdown custom
+    let ingSelectList   = document.getElementById('ingSelectList')  // ul du dropdown custom
+    let selectedRecIng  = null
+    let btnAddIng       = document.getElementById('btnAddIng')
     let inputDesc      = document.getElementById('inputDesc')
     let btnSubmit      = document.getElementById('btnSubmit')
     let id              =document.getElementById("IdContainer")
 
-    let tabTags  = []   // noms des tags ajoutés à la recette
-    let tabIngs  = []   // noms des ingrédients ajoutés à la recette
+    let tabTags  = []   // noms des tags ajoutés à la recette MAJ a chaque ajout ou suppression
+    let tabIngs  = []   // noms des ingrédients ajoutés à la recette idem
 
-    let URL="../Back/index.php"
+    let URL="../Back/index.php" 
+
+    // ══════════════════════════════════════════════════════════════
+    //  DROPDOWN CUSTOM – SUPPRESSION TAG
+    // ══════════════════════════════════════════════════════════════
+
+    if (tagDeleteFilter && tagDeleteList) { //Si il existe
+        let isFocused = false   //On ne l'est affichera pas au départ
+
+        tagDeleteFilter.addEventListener("focus", () => {
+            isFocused = true    //Il s'affiche
+            filterTagDeleteDropdown()   //on filtre
+        })
+        tagDeleteFilter.addEventListener("input", () => { //A chaque changement on MAJ le filtre
+            if (isFocused) filterTagDeleteDropdown()
+        })
+        tagDeleteFilter.addEventListener("blur", () => {
+            isFocused = false
+            setTimeout(() => tagDeleteList.classList.remove("open"), 150)
+        })
+        tagDeleteList.addEventListener("mousedown", (e) => {    //Lorsque l'on click
+            let li = e.target.closest("li")         //la cicle devient le li de l'option du dropdown
+            if (!li) return
+            tagDeleteList.querySelectorAll("li.selected").forEach(el => el.classList.remove("selected"))    //On supprime les autres 
+            li.classList.add("selected")    
+            tagDeleteFilter.value = li.dataset.value
+            selectedDeleteTag = li.dataset.value
+            isFocused = false
+            tagDeleteList.classList.remove("open")
+        })
+
+        function filterTagDeleteDropdown() {    //filtre donc meme idee
+            let query = tagDeleteFilter.value.trim().toLowerCase()
+            let items = tagDeleteList.querySelectorAll("li")
+            let hasVisible = false
+            items.forEach(li => {
+                let match = li.textContent.toLowerCase().includes(query)
+                li.hidden = !match
+                if (match) hasVisible = true
+            })
+            tagDeleteList.classList.toggle("open", hasVisible)
+        }
+    }
     // ── command test ───────────────────────────────
     //console.log(button_deleteTag)
 
@@ -54,12 +103,55 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ══════════════════════════════════════════════════════════════
-    //  VALIDATIONS – ADMIN
+    //  DROPDOWN CUSTOM – TAGS RECETTE
+    // ══════════════════════════════════════════════════════════════
+
+    //Fonction pour la mise en place des dropdown de la recette
+    function setupRecipeDropdown(input, list, onSelect) {
+        let isFocused = false
+
+        input.addEventListener("focus", () => {
+            isFocused = true
+            filterList()
+        })
+        input.addEventListener("input", () => {
+            if (isFocused) filterList()
+        })
+        input.addEventListener("blur", () => {
+            isFocused = false
+            setTimeout(() => list.classList.remove("open"), 150)
+        })
+        list.addEventListener("mousedown", (e) => {
+            let li = e.target.closest("li")
+            if (!li) return
+            list.querySelectorAll("li.selected").forEach(el => el.classList.remove("selected"))
+            li.classList.add("selected")
+            input.value = li.textContent.trim()
+            onSelect(li.dataset.value, li.textContent.trim())
+            isFocused = false
+            list.classList.remove("open")
+        })
+
+        function filterList() {
+            let query = input.value.trim().toLowerCase()
+            let items = list.querySelectorAll("li")
+            let hasVisible = false
+            items.forEach(li => {
+                let match = li.textContent.toLowerCase().includes(query)
+                li.hidden = !match
+                if (match) hasVisible = true
+            })
+            list.classList.toggle("open", hasVisible)
+        }
+    }
+
+    setupRecipeDropdown(tagInput, tagInputList, (val, label) => { selectedRecTag = { val, label } })
+    setupRecipeDropdown(ingSelect, ingSelectList, (val, label) => { selectedRecIng = { val, label } })
     // ══════════════════════════════════════════════════════════════
 
     /** Vérifie qu'un tag est sélectionné dans le select de suppression */
     function validateDeleteTag() {
-        if (!select_DeleteTag.value || select_DeleteTag.value.trim() === "") {
+        if (!selectedDeleteTag || selectedDeleteTag.trim() === "") {
             alert("Veuillez sélectionner un tag à supprimer.")
             return false
         }
@@ -137,17 +229,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return ok
     }
 
-    /** Vérifie que le select de tag a bien une valeur choisie */
+    /** Vérifie qu'un tag est sélectionné dans le dropdown */
     function validateTagSelect() {
-        let ok = tagInput.value !== "" && tagInput.value !== null
+        let ok = selectedRecTag !== null
         tagInput.classList.toggle('invalid', !ok)
         showError('errTag', !ok, 'Veuillez sélectionner un tag.')
         return ok
     }
 
-    /** Vérifie que le select d'ingrédient a bien une valeur choisie */
+    /** Vérifie qu'un ingrédient est sélectionné dans le dropdown */
     function validateIngSelect() {
-        let ok = ingSelect.value !== "" && ingSelect.value !== null
+        let ok = selectedRecIng !== null
         ingSelect.classList.toggle('invalid', !ok)
         showError('errIng', !ok, 'Veuillez sélectionner un ingrédient.')
         return ok
@@ -178,9 +270,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     imgFileInput.addEventListener('change', function () {
         let file = this.files[0]
-        if (file && file.type.startsWith('image/')) {
+        if (file && file.type.startsWith('image/')) {   //Si c'est bien une image
             let reader = new FileReader()
-            reader.onload = e => {
+            reader.onload = e => {  //On affiche
                 imgPlaceholder.style.display = 'none'
                 let img = imagePreview.querySelector('img')
                 if (!img) {
@@ -196,28 +288,31 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     // ══════════════════════════════════════════════════════════════
-    //  LOGIQUE – TAGS RECETTE (depuis le select PHP)
+    //  LOGIQUE – TAGS RECETTE 
     // ══════════════════════════════════════════════════════════════
 
-    btnAddTag.addEventListener('click', function () {
+    btnAddTag.addEventListener('click', function () {   //Ajout d'un tag dans la nouvelle recette/Alter
         if (!validateTagSelect()) return
-        let name = tagInput.value.trim()
+        let name = selectedRecTag.label
         if (tabTags.includes(name)) {
             showError('errTag', true, 'Ce tag est déjà ajouté.')
             return
         }
         tabTags.push(name)
         renderTags()
-        tagInput.value = ''           // remet le select sur l'option vide
+        tagInput.value = ''
+        selectedRecTag = null
         showError('errTag', false)
     })
 
-    function renderTags() {
+    function renderTags() { //Affichage des tags lors de l'ajout
         tagsRow.innerHTML = ''
+        //Si c est vide
         if (tabTags.length === 0) {
             tagsRow.innerHTML = '<span style="opacity:0.45;font-size:0.85rem;">Aucun tag ajouté</span>'
             return
         }
+        //Pour chaque tag on cree un element clickable qui le detruit
         tabTags.forEach(tag => {
             let chip = document.createElement('div')
             chip.className = 'tag-chip'
@@ -231,12 +326,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ══════════════════════════════════════════════════════════════
-    //  LOGIQUE – INGRÉDIENTS RECETTE (depuis le select PHP)
+    //  LOGIQUE – INGRÉDIENTS RECETTE 
     // ══════════════════════════════════════════════════════════════
 
+    //Ajout d'un ingredient au formulaire de recette
     btnAddIng.addEventListener('click', function () {
         if (!validateIngSelect()) return
-        let name = ingSelect.value.trim()
+        let name = selectedRecIng.label
         if (tabIngs.includes(name)) {
             showError('errIng', true, 'Cet ingrédient est déjà ajouté.')
             return
@@ -256,7 +352,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         ingGrid.appendChild(item)
 
-        ingSelect.value = ''          // remet le select sur l'option vide
+        ingSelect.value = ''
+        selectedRecIng = null
         showError('errIng', false)
     })
 
@@ -265,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ══════════════════════════════════════════════════════════════
 
     btnSubmit.addEventListener('click', function () {
+        //Les validations
         let v1 = validateTitle()
         let v2 = validateImage()
         let v3 = validateIngredients()
@@ -272,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (v1 && v2 && v3 && v4) {
          
-
+            //Le stockage des datas
             let data= new FormData()
             data.append("newTitle",inputTitle.value)
             data.append("newTags",tabTags)
@@ -291,10 +389,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(URL,options).then(response =>{
             if (response.ok) {
-                response.json().then(data => { // json() parse les données
+                // 
                     id.innerText=''
                     console.log("new Recette Added")
-                })
+                
             } else {
                 alert("ERREUR avec la requête.", response.statusText);
             }
@@ -311,16 +409,15 @@ document.addEventListener('DOMContentLoaded', function () {
     //  LOGIQUE – BOUTONS ADMIN
     // ══════════════════════════════════════════════════════════════
 
+    //Si le bouton de deletion existe (j ai eu des problemes lorsque l'on est pas logIn)
     if(button_deleteTag !=null){
-        button_deleteTag.addEventListener("click", function () {
+        button_deleteTag.addEventListener("click", function () {    //On envoie une post pour delete le tag selectionné
         if (!validateDeleteTag()) return
-        console.log("DeleteTag id:", select_DeleteTag.value)
-   
+        console.log("DeleteTag:", selectedDeleteTag)
 
             let data= new FormData()
-            
-            data.append("DeletedTags",select_DeleteTag.value)
-   
+            data.append("DeletedTags", selectedDeleteTag)
+
             let options ={
                 method :'POST',
                 body : data
@@ -328,20 +425,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(URL,options).then(response =>{
             if (response.ok) {
-                response.json().then(data => { // json() parse les données
+                    // Retire le li du dropdown
+                    tagDeleteList.querySelectorAll("li").forEach(li => {
+                        if (li.dataset.value === selectedDeleteTag) li.remove()
+                    })
+                    tagDeleteFilter.value = ""
+                    selectedDeleteTag = null
                     console.log("Tag deleted")
-                })
+                
             } else {
                 alert("ERREUR avec la requête.", response.statusText);
             }
         }).catch(error => {
-            console.log("ERREUR avec le fetch new Recette.", error)
+            console.log("ERREUR avec le fetch DeleteTag.", error)
         })
     })
     }
     
 
-    button_addNewTag.addEventListener("click", function () {
+    button_addNewTag.addEventListener("click", function () { //Button de creation d'un new TAG
         if (!validateNewTag()) return
         console.log("addTag:", input_NewTag.value.trim())
         
@@ -357,9 +459,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(URL,options).then(response =>{
             if (response.ok) {
-                response.json().then(data => { // json() parse les donnée
+                
                     console.log("Tag Created")
-                })
+                
             } else {
                 alert("ERREUR avec la requête.", response.statusText);
             }
@@ -368,36 +470,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     })
 
-    if(button_DeleteIng !=null){
-        button_DeleteIng.addEventListener("click", function () {
-            if (!validateDeleteIng()) return
-            console.log("DeleteIng id:", select_DeleteIng.value)
-            
 
-                let data= new FormData()
-                
-                data.append("DeletedIng",select_DeleteIng.value)
-
-                let options ={
-                    method :'POST',
-                    body : data
-                }
-
-                fetch(URL,options).then(response =>{
-                if (response.ok) {
-                    response.json().then(data => { // json() parse les données
-                        console.log("Ingredient deleted")
-                    })
-                } else {
-                    alert("ERREUR avec la requête.", response.statusText);
-                }
-            }).catch(error => {
-                console.log("ERREUR avec le fetch new Recette.", error)
-            })
-        })
-    }
-
-    button_AddNewIng.addEventListener("click", function () {
+    button_AddNewIng.addEventListener("click", function () {    //Ajout d'un nouvelle ingredient
         if (!validateNewIng()) return
         if (!validateImageInput(fileInput_NewIng)) return
         console.log("AddIng:", input_NewIng.value.trim())
@@ -415,10 +489,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(URL,options).then(response =>{
             if (response.ok) {
-                response.json().then(data => { // json() parse les données
+                
             
                     console.log("Ingredient cree")
-                })
+                
             } else {
                 alert("ERREUR avec la requête.", response.statusText);
             }
@@ -429,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-AddRecetteButton.addEventListener("click", function () {
+AddRecetteButton.addEventListener("click", function () {    //Ajout d'une recette/modification si un ID est present
     if(showing){
             display.style.display="none"
         AddRecetteButton.innerText="Ajouter une recette"
@@ -524,7 +598,8 @@ AddRecetteButton.addEventListener("click", function () {
         }
         ingGrid.appendChild(item)
 
-        ingSelect.value = ''          // remet le select sur l'option vide
+        ingSelect.value = ''
+        selectedRecIng = null
         showError('errIng', false)
         });
 
