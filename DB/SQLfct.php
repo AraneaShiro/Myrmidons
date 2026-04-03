@@ -661,6 +661,47 @@ function delierRecetteTag($recetteID, $tagNom) {
     
 }
 
+/**
+ * fonction qui enleve toutes les liaisons d'une recette donnée
+ */
+function delierToutesLesLiaisonsRecette($recetteID) {
+
+    try{
+        //supprimer ingredient liens
+        $queryIngredient = "DELETE FROM recetteIngredient WHERE recetteID = :recetteID";
+            $statement = $this->pdo->prepare($queryIngredient);
+            $statement->bindValue(':recetteID', $recetteID);
+            $statement->execute();
+            
+        //supprimer tag liens
+        $queryTag = "DELETE FROM recetteTag WHERE recetteID = :recetteID";
+        $statement = $this->pdo->prepare($queryTag);
+        $statement->bindValue(':recetteID', $recetteID);
+        $statement->execute();
+
+    } catch(\Exception $ex) {
+        die("Erreur suppression liaisons recette : " . $ex->getMessage());
+    }
+
+}
+
+/**
+ * fonction qui enleve toutes les liaisons dune recette donnée
+ */
+function delierToutesLesLiaisonsTag($tagNom) {
+
+    try {
+        $query = "DELETE FROM recetteTag WHERE tagNom = :tagNom";
+        $statement = $this->pdo->prepare($query);
+        $statement->bindValue(':tagNom', $tagNom);
+        $statement->execute();
+        
+    } catch(\Exception $ex) {
+        die("Erreur suppression liaisons tag : " . $ex->getMessage());
+    }
+
+}
+
 /*
 ----------------
   * MODIFIER *  
@@ -827,6 +868,9 @@ function barreRecherche($motRecherche = "", $tabIngredients = [], $tabTags = [])
 }
 
 }
+
+
+
 
 
 
