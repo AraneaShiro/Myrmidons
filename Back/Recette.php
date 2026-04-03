@@ -1,10 +1,8 @@
 <?php
 require_once "../DB/SQLfct.php";
-class Recette
-{
-    private $db;
-    public function __construct()
-    {
+class Recette{
+    public $db;
+    public function __construct(){
         $this->db = new SQLfct();
     }
 
@@ -77,4 +75,5 @@ class Recette
                 <h6 class="IdRecette">' . $id . '</h6>
             </div>';
     }
+
 }
