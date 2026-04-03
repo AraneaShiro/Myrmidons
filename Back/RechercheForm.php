@@ -36,18 +36,25 @@ class RechercheForm
         $ingredients = $this->db->rechercherIngredientAll();
         echo '
         <div class="topFiltre">
-        <label for="Ingredient">Ingredient</label>
-        <button id="AddIngredient" class="btn btn-secondary">Add Ingredient</button>
-            
+            <label for="Ingredient">Ingredient</label>
+            <button id="AddIngredient" class="btn btn-secondary">Add Ingredient</button>
         </div>
-        <select class="IngredientSelect" name="ingredient" id="ingredientSelector">
-        <option value="" disabled selected>-- Choisir un ingredient --</option>';
+        <div class="customDropdownWrapper">
+            <input
+                type="text"
+                id="ingredientFilter"
+                class="form-control"
+                placeholder="Rechercher un ingrédient..."
+                autocomplete="off"
+            >
+            <ul id="ingredientList" class="dropdownList">';
         foreach ($ingredients as $ingredient) {
             $nom = htmlspecialchars($ingredient['nom']);
-            echo "<option value=\"{$nom}\">{$nom}</option>";
+            echo "<li data-value=\"{$nom}\">{$nom}</li>";
         }
-
-        echo '</select>';
+        echo '
+            </ul>
+        </div>';
     }
 
     public function generateTagForm()
@@ -55,16 +62,25 @@ class RechercheForm
         $tags = $this->db->rechercherTagAll();
         echo '
         <div class="topFiltre">
-        <label for="Tag">Tag</label>
-        <button id="AddTag" class="btn btn-secondary">Add Tag</button>
+            <label for="Tag">Tag</label>
+            <button id="AddTag" class="btn btn-secondary">Add Tag</button>
         </div>
-        <select class="TagSelect" name="tag" id="tagSelection">
-        <option value="" disabled selected>-- Choisir un tag --</option>';
+        <div class="customDropdownWrapper">
+            <input
+                type="text"
+                id="tagFilter"
+                class="form-control"
+                placeholder="Rechercher un tag..."
+                autocomplete="off"
+            >
+            <ul id="tagList" class="dropdownList">';
         foreach ($tags as $tag) {
             $nom = htmlspecialchars($tag['nom']);
-            echo "<option value=\"{$nom}\">{$nom}</option>";
+            echo "<li data-value=\"{$nom}\">{$nom}</li>";
         }
-        echo '</select>';
+        echo '
+            </ul>
+        </div>';
     }
 
 }
