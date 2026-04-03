@@ -1,0 +1,12 @@
+.SourcePage {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.categorie {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

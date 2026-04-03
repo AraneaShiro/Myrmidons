@@ -228,38 +228,98 @@ function rechercherTagsDansRecette($recetteID) {
  */
 function rechercherRecettesAvecIngredients($tabIngredientsRechercheID) {
 
-    $allRecettes = $this->rechercherRecettesAll();
+    try{
+        
+        //si le tab est vide, on renvoie un tab vide
+        if (empty($tabIngredientsRechercheID)) return [];
+        
 
-    $tabRecetteValide = [];
+        $allRecettes = $this->rechercherRecettesAll();
 
-    foreach($allRecettes as $currentRecette) {
+        $tabRecetteValide = [];
 
-        //tous les ingrédients de cette recette
-        $ingredientsRecette = $this->rechercherIngredientsDansRecette(  $currentRecette['recetteID']   );
+        foreach($allRecettes as $currentRecette) {
 
-        //on garde juste les ID des ingredients dans la recette
-        $tabIngredientsID = array_column($ingredientsRecette, 'ingredientID');
+            //tous les ingrédients de cette recette
+            $ingredientsRecette = $this->rechercherIngredientsDansRecette(  $currentRecette['recetteID']   );
 
-        $contientTout = true;
+            //on garde juste les ID des ingredients dans la recette
+            $tabIngredientsID = array_column($ingredientsRecette, 'ingredientID');
 
-        //chaque ingredient des ingredients recherchés
-        foreach($tabIngredientsRechercheID as $currentIngredientID) {
+            $contientTout = true;
 
-            //si 1 des ingrédients est manquant
-            if(!in_array($currentIngredientID, $tabIngredientsID)) {
-                $contientTout = false;
-                break;
+            //chaque ingredient des ingredients recherchés
+            foreach($tabIngredientsRechercheID as $currentIngredientID) {
+
+                //si 1 des ingrédients est manquant
+                if(!in_array($currentIngredientID, $tabIngredientsID)) {
+                    $contientTout = false;
+                    break;
+                }
+
             }
+
+            //si la recette possède tous les ingredients, on le rajoute
+            if($contientTout) $tabRecetteValide[] = $currentRecette;
+
 
         }
 
-        //si la recette possède tous les ingredients, on le rajoute
-        if($contientTout) $tabRecetteValide[] = $currentRecette;
+        return $tabRecetteValide;
 
-
+    } catch(\Exception $ex){
+        die("Erreur rechercherRecettesAvecIngredients : " . $ex->getMessage()) ;
     }
 
-    return $tabRecetteValide;
+}
+
+/**
+ * fonction qui donne les recettes qui possèdent tous les tags donnés
+ */
+function rechercherRecettesAvecTags($tabTagsRechercheNom) {
+
+    try{
+        
+        //si le tab est vide, on renvoie un tab vide
+        if (empty($tabTagsRechercheNom)) return [];
+        
+
+        $allRecettes = $this->rechercherRecettesAll();
+
+        $tabRecetteValide = [];
+
+        foreach($allRecettes as $currentRecette) {
+
+            //tous les ingrédients de cette recette
+            $tagsRecette = $this->rechercherTagsDansRecette(  $currentRecette['recetteID']   );
+
+            //on garde juste les noms des tags dans la recette
+            $tabTagsNom = array_column($tagsRecette, 'nom');
+
+            $contientTout = true;
+
+            //chaque ingredient des tags recherchés
+            foreach($tabTagsRechercheNom as $currentTagNom) {
+
+                //si 1 des tags est manquant
+                if(!in_array($currentTagNom, $tabTagsNom)) {
+                    $contientTout = false;
+                    break;
+                }
+
+            }
+
+            //si la recette possède tous les ingredients, on le rajoute
+            if($contientTout) $tabRecetteValide[] = $currentRecette;
+
+
+        }
+
+        return $tabRecetteValide;
+
+    } catch(\Exception $ex){
+        die("Erreur rechercherRecettesAvecTags : " . $ex->getMessage()) ;
+    }
 
 }
 
@@ -676,7 +736,95 @@ function modifierTag($tagNom, $newNom) {
 
 }
 
+/* 
+=======================================================================
+                * FONCTIONS POUR BARRE DE RECHERCHE *
+=======================================================================
+ */
 
+function barreRecherche($motRecherche = "", $tabIngredients = [], $tabTags = []) {
+
+        //si on a un mot, on recherche spécifiquement les mots qui ressemblent sinon on recherche tout
+        if (!empty($motRecherche)) {
+            $recettes = $this->rechercherRecettes($motRecherche);
+        } 
+        else {
+            $recettes = $this->rechercherRecettesAll();
+        }
+
+        /*        Filtrage par ingredients          */
+
+        //si on a des ingredients
+        if (!empty($tabIngredients)) {
+
+            $recettesFiltrees = [];
+
+            foreach ($recettes as $recette) {
+
+                //on regarde les ingredients dans la recette actuel
+                $tabIngredientDansRecette = $this->rechercherIngredientsDansRecette($recette['recetteID']);
+                $tabIngredientDansRecette = array_column($tabIngredientDansRecette, 'ingredientID');
+
+                $contientTout = true;
+
+                //chaque ingredient est dans la recette recherchés
+                foreach($tabIngredients as $currentIngredientID) {
+
+                    //si 1 des ingredient est manquant
+                    if(!in_array($currentIngredientID, $tabIngredientDansRecette)) {
+                        $contientTout = false;
+                        break;
+                    }
+
+                }
+
+                //si c bon on le rajoute
+                if($contientTout) $recettesFiltrees[] = $recette;
+                
+            }
+
+            $recettes = $recettesFiltrees;
+        }
+
+        /*        Filtrage par tags          */
+
+        //si on a des tags
+        if (!empty($tabTags)) {
+
+            $recettesFiltrees = [];
+
+            foreach ($recettes as $recette) {
+
+                //on regarde les tags dans la recette actuel
+                $tabTagDansRecette = $this->rechercherTagsDansRecette($recette['recetteID']);
+                $tabTagDansRecette = array_column($tabTagDansRecette, 'nom');
+
+                $contientTout = true;
+
+                //chaque tag dans la recette recherchés
+                foreach($tabTags as $currentTagNom) {
+
+                    //si 1 des tags est manquant
+                    if(!in_array($currentTagNom, $tabTagDansRecette)) {
+                        $contientTout = false;
+                        break;
+                    }
+
+                }
+
+                //si c bon on le rajoute
+                if($contientTout) $recettesFiltrees[] = $recette;
+                
+            }
+
+            $recettes = $recettesFiltrees;
+        }
+
+
+        return $recettes;
+
+
+}
 
 }
 
