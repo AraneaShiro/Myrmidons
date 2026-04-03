@@ -74,6 +74,7 @@ class AddContent
     public function deleteTag($nom)
     {
         if (!empty($nom)) {
+            $this->db->delierToutesLesLiaisonsTag($nom);
             $this->db->supprimerTag($nom);
             return ['succes' => true, 'message' => 'Tag supprimé'];
         }
@@ -119,12 +120,19 @@ class AddContent
     }
 
     // fonction pour modifier une recette existante dans la base de données
-    public function modifierRecette($id, $nom, $texte, $photo)
-    {
+    public function modifierRecette($id, $nom, $texte, $photo, $ingredient, $tags){
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
         $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
+        foreach ($tags as $tag) {
+            $tagid = $tag['nom'];
+            $this->db->lierRecetteTag($id,$tagid);
+        }
+        foreach ($ingredient as $ing) {
+            $ingid = $ing['ingredientID'];
+            $this->db->lierRecetteIngredient($id, $ingid);
+        }
         return ['succes' => true, 'message' => 'Recette modifiée'];
     }
 
@@ -134,6 +142,7 @@ class AddContent
         if (empty($id)) {
             return ['succes' => false, 'message' => 'ID manquant'];
         }
+        $this->db->delierToutesLesLiaisonsRecette($id);
         $this->db->supprimerRecette(intval($id));
         return ['succes' => true, 'message' => 'Recette supprimée'];
     }
