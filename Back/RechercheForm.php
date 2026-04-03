@@ -41,7 +41,7 @@ class RechercheForm
             
         </div>
         <select class="IngredientSelect" name="ingredient" id="ingredientSelector">
-            <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
+        <option value="" disabled selected>-- Choisir un ingredient --</option>';
         foreach ($ingredients as $ingredient) {
             $nom = htmlspecialchars($ingredient['nom']);
             echo "<option value=\"{$nom}\">{$nom}</option>";
@@ -59,7 +59,7 @@ class RechercheForm
         <button id="AddTag" class="btn btn-secondary">Add Tag</button>
         </div>
         <select class="TagSelect" name="tag" id="tagSelection">
-        <option value="test" class="TagSelect"> test</option>'; //Ligne pour test
+        <option value="" disabled selected>-- Choisir un tag --</option>';
         foreach ($tags as $tag) {
             $nom = htmlspecialchars($tag['nom']);
             echo "<option value=\"{$nom}\">{$nom}</option>";
