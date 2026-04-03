@@ -48,7 +48,7 @@ class RechercheForm{
     }
 
     public function generateTagForm(){
-        $tags = $this->db->rechercherIngredientAll();
+        $tags = $this->db->rechercherTagAll();
         echo '
         <div class="topFiltre">
         <label for="Tag">Tag</label>

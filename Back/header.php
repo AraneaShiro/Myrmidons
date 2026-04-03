@@ -1,19 +1,8 @@
 <?php
-session_start();
 require_once 'AdminLogger.php';
 $logger = new AdminLogger();
-$username = null;
-$password = null;
-if(isset($_POST['username']) && isset($_POST['password'])){
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $result = $logger->log($username, $password);
-    if($result['granted']){
-        $_SESSION['nickname'] = $result['username'];
-        header("Location: login_admin.php");
-    }
-}
 $logged = isset($_SESSION['nickname']) ;
+$login_error = isset($_SESSION['login_error']) ? $_SESSION['login_error'] : null;
 
 ?>
 <header class="main-header">

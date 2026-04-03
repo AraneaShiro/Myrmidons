@@ -11,7 +11,7 @@ class AddContent{
 
     // fonction pour generer le formulaire d'ajout de tags
     public function generateTagAdditionForm(){
-        echo '<div class="topFiltre"><label for="NamenewTag">NewTagName</label><button class="btn" id="AddNewTag">+</button></div>
+        echo '<div class="topFiltre"><label for="NamenewTag">Nouveau Tag</label><button class="btn" id="AddNewTag">+</button></div>
         
             <input type="text" id="NewTagInput" class="form-control">
             ';
@@ -19,7 +19,7 @@ class AddContent{
 
     // fonction pour generer le formulaire de suppression des tags
     public function generateTagDeleteForm(){
-        $tags = $this->db->rechercherIngredientAll();
+        $tags = $this->db->rechercherTagAll();
         
         echo '<div class="topFiltre"><label for="Tag">Tag</label><button class="btn btn-warning btn-sm" id="DeleteTag">-</button>
         </div>
@@ -38,7 +38,7 @@ class AddContent{
     public function generateIngredientAddForm(){
         echo '
         <div class="input-group mb-3 topFiltre">
-        <label for="NamenewIng" class="input-group-text">Nouvelle Ingredient</label>
+        <label for="NamenewIng" class="input-group-text">Nouvel Ingredient</label>
         <button class="btn btn-success btn-sm" id="AddNewIng">+</button>
         </div>
                     <input type="text" id="NewIngIput" placeholder="Tomate">
@@ -105,7 +105,7 @@ class AddContent{
 
     // fonction qui genere le formulaire pour ajouter des tags à une recette lors de sa creation
     public function generateTagListAdd(){
-        $tags = $this->db->rechercherIngredientAll();
+        $tags = $this->db->rechercherTagAll();
         echo   '<label>Tags</label>
                 <div class="tags-row" id="tagsRow">
                     <span>Aucun tag ajouté</span>
