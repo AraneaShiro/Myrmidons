@@ -58,6 +58,7 @@ class AddContent{
     // fonction pour supprimer un tag de la base de données
     public function deleteTag($nom){
         if (!empty($nom)) {
+            $this->db->delierToutesLesLiaisonsTag($nom);
             $this->db->supprimerTag($nom);
             return ['succes' => true, 'message' => 'Tag supprimé'];
         }
@@ -122,6 +123,7 @@ class AddContent{
         if (empty($id)) {
             return ['succes' => false, 'message' => 'ID manquant'];
         }
+        $this->db->delierToutesLesLiaisonsRecette($id);
         $this->db->supprimerRecette(intval($id));
         return ['succes' => true, 'message' => 'Recette supprimée'];
     }
