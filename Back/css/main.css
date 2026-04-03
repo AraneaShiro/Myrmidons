@@ -17,23 +17,23 @@ header {
 }
 
 .navbar a:hover {
-   color: #ec1c24;
-   transition-duration: 0.5s;
+    color: #ec1c24;
+    transition-duration: 0.5s;
 }
 
-.logo{
+.logo {
     display: flex;
     flex-direction: column;
     text-decoration: none;
     max-width: 150px;
 }
 
-.logo:hover{
+.logo:hover {
     text-decoration: none;
     color: inherit;
 }
 
-.logo-text{
+.logo-text {
     font-family: 'Lugrasimo';
 }
 
@@ -46,7 +46,7 @@ header {
 
 /* -----------------------------------Page Principale ----------------------*/
 
-#injected-content{
+#injected-content {
     margin-top: 60px;
 }
 
@@ -84,7 +84,7 @@ body {
     background-color: brown;
 }
 
-#btnSearch:hover{
+#btnSearch:hover {
     background-color: rgb(175, 45, 45);
     transition-duration: 0.2s;
 }
