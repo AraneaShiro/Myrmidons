@@ -13,7 +13,61 @@
     $recherche = new RechercheForm();
     $addition = new AddContent();
     $recette = new Recette();
-    $recettesAll = $recette->db->rechercherRecettesAll();
+    // Récupération des paramètres GET de recherche
+    $search      = isset($_GET['search'])      ? trim($_GET['search'])      : '';
+    $ingredients = isset($_GET['ingredients']) ? trim($_GET['ingredients']) : '';
+    $tags        = isset($_GET['tags'])        ? trim($_GET['tags'])        : '';
+
+    // Récupération des recettes selon la recherche par nom
+    if (!empty($search)) {
+        $recettesFiltre = $recette->db->rechercherRecettes($search);
+    } else {
+        $recettesFiltre = $recette->db->rechercherRecettesAll();
+    }
+
+    // Filtre par tags
+    if (!empty($tags)) {
+        $tabTags = explode(',', $tags);
+        $recettesGarder = [];
+        foreach ($recettesFiltre as $r) {
+            $tagsRecette = $recette->db->rechercherTagsDansRecette($r['recetteID']);
+            $nomsTagsRecette = [];
+            foreach ($tagsRecette as $t) {
+                $nomsTagsRecette[] = $t['nom'];
+            }
+            $ok = true;
+            foreach ($tabTags as $tagCherche) {
+                if (!in_array($tagCherche, $nomsTagsRecette)) {
+                    $ok = false;
+                    break;
+                }
+            }
+            if ($ok) $recettesGarder[] = $r;
+        }
+        $recettesFiltre = $recettesGarder;
+    }
+
+    // Filtre par ingrédients
+    if (!empty($ingredients)) {
+        $tabIngs = explode(',', $ingredients);
+        $recettesGarder = [];
+        foreach ($recettesFiltre as $r) {
+            $ingsRecette = $recette->db->rechercherIngredientsDansRecette($r['recetteID']);
+            $nomsIngsRecette = [];
+            foreach ($ingsRecette as $i) {
+                $nomsIngsRecette[] = $i['nom'];
+            }
+            $ok = true;
+            foreach ($tabIngs as $ingCherche) {
+                if (!in_array($ingCherche, $nomsIngsRecette)) {
+                    $ok = false;
+                    break;
+                }
+            }
+            if ($ok) $recettesGarder[] = $r;
+        }
+        $recettesFiltre = $recettesGarder;
+    }
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ob_clean(); // vide le buffer avant d'envoyer le JSON
 
@@ -187,7 +241,7 @@
 
             <?php $addition->generateRecetteAddForm() ?>
             <?php 
-                foreach($recettesAll as $recettes) {
+                foreach($recettesFiltre as $recettes) {
                     $id = $recettes['recetteID'];
                     $recette->generateRecetteCard($id);
                 }
