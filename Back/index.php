@@ -138,15 +138,19 @@
         
         // Ajouter / Modifier une recette
         if (isset($_POST['newTitle'])) {
-            $nom = htmlspecialchars($_POST['newTitle'] ?? '');
-            $texte = htmlspecialchars($_POST['newDesc'] ?? '');
-            $idRecette = trim($_POST['newId'] ?? '');
-            $photo = $addition->uploadPhoto('imgFileInput');
-            $ingredients = $_POST['newIngredients'];
-            $tags = $_POST['newTags'];
-            if (!empty($idRecette)) {
+            $nom      = htmlspecialchars($_POST['newTitle'] ?? '');
+            $texte    = htmlspecialchars($_POST['newDesc']  ?? '');
+            $idRecette = intval(trim($_POST['newId'] ?? ''));
+            $photo    = $addition->uploadPhoto('imgFileInput');
+            // Le JS envoie les tags et ingrédients sous forme de chaîne CSV ("tag1,tag2")
+            // on les découpe en tableaux avec explode, en filtrant les valeurs vides
+            $tags        = isset($_POST['newTags'])        && $_POST['newTags']        !== ''
+                           ? explode(',', $_POST['newTags'])        : [];
+            $ingredients = isset($_POST['newIngredients']) && $_POST['newIngredients'] !== ''
+                           ? explode(',', $_POST['newIngredients']) : [];
+            if ($idRecette > 0) {
                 // Modification d'une recette existante
-                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo, $ingredients, $tags);
+                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo, $tags, $ingredients);
             } else {
                 // Nouvelle recette
                 $resultat = $addition->addRecette($nom, $texte, $photo);

@@ -120,19 +120,38 @@ class AddContent
     }
 
     // fonction pour modifier une recette existante dans la base de données
-    public function modifierRecette($id, $nom, $texte, $photo, $ingredient, $tags)
+    public function modifierRecette($id, $nom, $texte, $photo, $tags, $ingredients)
     {
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
-        $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
-        foreach ($tags as $tag) {
-            $tagid = $tag['nom'];
-            $this->db->lierRecetteTag($id, $tagid);
+        // Si aucune nouvelle photo uploadée, on garde l'ancienne
+        if (empty($photo)) {
+            $recetteActuelle = $this->db->rechercherRecetteParID(intval($id));
+            $photo = $recetteActuelle['photo'];
         }
-        foreach ($ingredient as $ing) {
-            $ingid = $ing['ingredientID'];
-            $this->db->lierRecetteIngredient($id, $ingid);
+        $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
+        // On supprime toutes les liaisons existantes avant de re-lier
+        $this->db->delierToutesLesLiaisonsRecette(intval($id));
+        // $tags est un tableau de noms de tags (ex. ["italien", "rapide"])
+        foreach ($tags as $tagNom) {
+            $tagNom = trim($tagNom);
+            if (!empty($tagNom)) {
+                $this->db->lierRecetteTag(intval($id), $tagNom);
+            }
+        }
+        // $ingredients est un tableau de noms d'ingrédients (ex. ["tomate", "boeuf"])
+        // on résout chaque nom en ID via rechercherIngredientAll
+        $tousIngredients = $this->db->rechercherIngredientAll();
+        foreach ($ingredients as $ingNom) {
+            $ingNom = trim($ingNom);
+            if (empty($ingNom)) continue;
+            foreach ($tousIngredients as $i) {
+                if ($i['nom'] === $ingNom) {
+                    $this->db->lierRecetteIngredient(intval($id), intval($i['ingredientID']));
+                    break;
+                }
+            }
         }
         return ['succes' => true, 'message' => 'Recette modifiée'];
     }
@@ -158,7 +177,7 @@ class AddContent
                 mkdir($dirImg); // crée le dossier si besoin
             $nomFichier = basename($file['name']); // sécurise le nom
             move_uploaded_file($file['tmp_name'], $dirImg . $nomFichier);
-            return $nomFichier;
+            return $dirImg . $nomFichier;
         }
     }
 
