@@ -240,10 +240,14 @@
 
 
             <?php $addition->generateRecetteAddForm() ?>
-            <?php 
+            <?php
+                $rechercheActive = !empty($search) || !empty($tags) || !empty($ingredients);
+                $compteur = 0;
                 foreach($recettesFiltre as $recettes) {
+                    if (!$rechercheActive && $compteur >= 3) break;
                     $id = $recettes['recetteID'];
                     $recette->generateRecetteCard($id);
+                    $compteur++;
                 }
             ?>
         </div>
