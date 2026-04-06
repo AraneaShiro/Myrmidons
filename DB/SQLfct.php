@@ -352,23 +352,23 @@ class SQLfct
     /**
      * fonction qui rajoute dans la BDD un ingrédient avec son nom
      */
-    function ajouterIngredient($nomIngredient)
+    function ajouterIngredient($nomIngredient, $photo = '')
     {
-
+ 
         try {
-            $query = "INSERT INTO ingredient (nom) VALUES (:nom)";
-
+            $query = "INSERT INTO ingredient (nom, photo) VALUES (:nom, :photo)";
+ 
             $statement = $this->pdo->prepare($query);
-
-            // remplacement des valeurs avec les parametres
+ 
             $statement->bindValue(':nom', $nomIngredient);
-
+            $statement->bindValue(':photo', $photo);
+ 
             $statement->execute();
-
+ 
         } catch (\Exception $ex) {
             die("Erreur insertion ingredient : " . $ex->getMessage());
         }
-
+ 
     }
 
     /**
