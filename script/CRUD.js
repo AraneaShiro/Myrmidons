@@ -102,6 +102,43 @@ document.addEventListener('DOMContentLoaded', function () {
         if (msg) el.textContent = msg
     }
 
+   function resetForm() {
+    // Inputs
+    inputTitle.value = ""
+    inputDesc.value = ""
+    id.innerText = ""
+
+    // Image (FIX COMPLET)
+    imgFileInput.value = ""
+
+    // Supprime image <img>
+    imagePreview.innerHTML = ""
+
+    // Supprime background (mode édition)
+    imagePreview.style.backgroundImage = ""
+    imagePreview.style.backgroundSize = ""
+    imagePreview.style.backgroundPosition = ""
+
+    // Réaffiche le placeholder
+    imgPlaceholder.style.display = "block"
+
+    // Tags
+    tabTags = []
+    renderTags()
+    tagInput.value = ""
+    selectedRecTag = null
+
+    // Ingrédients
+    tabIngs = []
+    ingGrid.innerHTML = ""
+    ingSelect.value = ""
+    selectedRecIng = null
+
+    // Reset erreurs
+    document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'))
+    document.querySelectorAll('.visible').forEach(el => el.classList.remove('visible'))
+}
+
     // ══════════════════════════════════════════════════════════════
     //  DROPDOWN CUSTOM – TAGS RECETTE
     // ══════════════════════════════════════════════════════════════
@@ -222,12 +259,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validateImage() {
-        let allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
-        let ok = imgFileInput.files.length > 0 && allowedTypes.includes(imgFileInput.files[0].type)
-        imagePreview.classList.toggle('invalid', !ok)
-        showError('errImg', !ok, 'Veuillez sélectionner une image valide.')
-        return ok
+    let allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+
+    // MODE MODIFICATION (ID présent)
+    if (id.innerText.trim() !== "") {
+        // Si aucune nouvelle image → OK
+        if (imgFileInput.files.length === 0) {
+            imagePreview.classList.remove('invalid')
+            showError('errImg', false)
+            return true
+        }
     }
+    
+    // MODE NORMAL (ou si nouvelle image ajoutée)
+    let ok = imgFileInput.files.length > 0 && allowedTypes.includes(imgFileInput.files[0].type)
+
+    imagePreview.classList.toggle('invalid', !ok)
+    showError('errImg', !ok, 'Veuillez sélectionner une image valide.')
+
+    return ok
+}
 
     /** Vérifie qu'un tag est sélectionné dans le dropdown */
     function validateTagSelect() {
@@ -392,6 +443,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 
                     id.innerText=''
                     console.log("new Recette Added")
+                    resetForm()
                 
             } else {
                 alert("ERREUR avec la requête.", response.statusText);
