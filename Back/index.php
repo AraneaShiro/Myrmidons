@@ -13,11 +13,66 @@
     $recherche = new RechercheForm();
     $addition = new AddContent();
     $recette = new Recette();
-    $recettesAll = $recette->db->rechercherRecettesAll();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        ob_clean(); // vide le buffer avant d'envoyer le JSON
+    // Récupération des paramètres GET de recherche
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $ingredients = isset($_GET['ingredients']) ? trim($_GET['ingredients']) : '';
+    $tags = isset($_GET['tags']) ? trim($_GET['tags']) : '';
 
-        // Traitement du login (username + password)
+    // Récupération des recettes selon la recherche par nom
+    if (!empty($search)) {
+        $recettesFiltre = $recette->db->rechercherRecettes($search);
+    } else {
+        $recettesFiltre = $recette->db->rechercherRecettesAll();
+    }
+
+    // Filtre par tags
+    if (!empty($tags)) {
+        $tabTags = explode(',', $tags);
+        $recettesGarder = [];
+        foreach ($recettesFiltre as $r) {
+            $tagsRecette = $recette->db->rechercherTagsDansRecette($r['recetteID']);
+            $nomsTagsRecette = [];
+            foreach ($tagsRecette as $t) {
+                $nomsTagsRecette[] = $t['nom'];
+            }
+            $ok = true;
+            foreach ($tabTags as $tagCherche) {
+                if (!in_array($tagCherche, $nomsTagsRecette)) {
+                    $ok = false;
+                    break;
+                }
+            }
+            if ($ok) $recettesGarder[] = $r;
+        }
+        $recettesFiltre = $recettesGarder;
+    }
+
+    // Filtre par ingrédients
+    if (!empty($ingredients)) {
+        $tabIngs = explode(',', $ingredients);
+        $recettesGarder = [];
+        foreach ($recettesFiltre as $r) {
+            $ingsRecette = $recette->db->rechercherIngredientsDansRecette($r['recetteID']);
+            $nomsIngsRecette = [];
+            foreach ($ingsRecette as $i) {
+                $nomsIngsRecette[] = $i['nom'];
+            }
+            $ok = true;
+            foreach ($tabIngs as $ingCherche) {
+                if (!in_array($ingCherche, $nomsIngsRecette)) {
+                    $ok = false;
+                    break;
+                }
+            }
+            if ($ok) $recettesGarder[] = $r;
+        }
+        $recettesFiltre = $recettesGarder;
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        ob_clean();
+
+        // Traitement du login
         if (isset($_POST['username']) && isset($_POST['password'])) {
             $logger = new AdminLogger();
             $result = $logger->log($_POST['username'], $_POST['password']);
@@ -34,7 +89,7 @@
             }
         }
         
-        // Sécurité : tous les autres POST nécessitent d'être admin connecté
+        // Sécurité : admin uniquement
         if (!isset($_SESSION['nickname'])) {
             header('Content-Type: application/json');
             echo json_encode(['succes' => false, 'message' => 'Non autorisé']);
@@ -43,7 +98,7 @@
         
         // Supprimer une recette
         if (isset($_POST['DeletedId'])) {
-            $id = intval($_POST['DeletedId']); // cast int
+            $id = intval($_POST['DeletedId']);
             $resultat = $addition->deleteRecette($id);
             header('Content-Type: application/json');
             echo json_encode($resultat);
@@ -70,32 +125,44 @@
         
         // Ajouter un ingrédient
         if (isset($_POST['NewIng'])) {
-            $nom      = htmlspecialchars($_POST['NewIng']);
-            $photo    = $addition->uploadPhoto('imgInputIng');
-            // DEBUG temporaire : renvoie ce que PHP reçoit directement dans le JSON
+            $nom = htmlspecialchars($_POST['NewIng']);
+            $photo = $addition->uploadPhoto('imgInputIng');
+            $resultat = $addition->addIngredient($nom, $photo);
             header('Content-Type: application/json');
-            echo json_encode([
-                'debug_post'  => $_POST,
-                'debug_files' => $_FILES,
-                'photo' => $photo
-            ]);
+            echo json_encode($resultat);
             exit();
         }
         
         // Ajouter / Modifier une recette
         if (isset($_POST['newTitle'])) {
             $nom = htmlspecialchars($_POST['newTitle'] ?? '');
-            $texte = htmlspecialchars($_POST['newDesc'] ?? '');
-            $idRecette = trim($_POST['newId'] ?? '');
+            $texte = htmlspecialchars($_POST['newDesc']  ?? '');
+            
+            // Récupération de l'ID
+            $idRecette = 0;
+            if (isset($_POST['newId']) && $_POST['newId'] != '') {
+                $idRecette = intval($_POST['newId']);
+            }
+            
             $photo = $addition->uploadPhoto('imgFileInput');
-            $ingredients = $_POST['newIngredients'];
-            $tags = $_POST['newTags'];
-            if (!empty($idRecette)) {
+            
+            // Récupération des tags
+            $tags = [];
+            if (isset($_POST['newTags']) && $_POST['newTags'] != '') {
+                $tags = explode(',', $_POST['newTags']);
+            }
+            
+            // Récupération des ingrédients
+            $ingredients = [];
+            if (isset($_POST['newIngredients']) && $_POST['newIngredients'] != '') {
+                $ingredients = explode(',', $_POST['newIngredients']);
+            }
+            
+            if ($idRecette > 0) {
                 // Modification d'une recette existante
-                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo, $ingredients, $tags);
+                $resultat = $addition->modifierRecette($idRecette, $nom, $texte, $photo, $tags, $ingredients);
             } else {
-                // Nouvelle recette
-                $resultat = $addition->addRecette($nom, $texte, $photo);
+                $resultat = $addition->addRecette($nom, $texte, $photo, $tags, $ingredients);
             }
             header('Content-Type: application/json');
             echo json_encode($resultat);
@@ -110,7 +177,7 @@
     
     // Récupérer l'erreur de login pour l'afficher si elle existe
     $login_error = isset($_SESSION['login_error']) ? $_SESSION['login_error'] : null;
-    unset($_SESSION['login_error']); // Supprimer l'erreur après l'avoir récupérée
+    unset($_SESSION['login_error']);
 ?>
 <?php ob_start() ?>
 <!-- Barre de recherche en haut-->
@@ -144,17 +211,11 @@
             <!-- Partie Tag -->
             <div id="CrudTag">
                 <div id="DeleteTagPart">
-                    <?php 
-                        $addition->generateTagDeleteForm();
-
-                    ?>
+                    <?php $addition->generateTagDeleteForm(); ?>
                 </div>
                 <br>
                 <div id="AddTagPart">
-                    <?php 
-                       
-                        $addition->generateTagAdditionForm();
-                    ?>
+                    <?php $addition->generateTagAdditionForm(); ?>
                 </div>
             </div>
             <br>
@@ -186,10 +247,14 @@
 
 
             <?php $addition->generateRecetteAddForm() ?>
-            <?php 
-                foreach($recettesAll as $recettes) {
+            <?php
+                $rechercheActive = !empty($search) || !empty($tags) || !empty($ingredients);
+                $compteur = 0;
+                foreach($recettesFiltre as $recettes) {
+                    if (!$rechercheActive && $compteur >= 3) break;
                     $id = $recettes['recetteID'];
                     $recette->generateRecetteCard($id);
+                    $compteur++;
                 }
             ?>
         </div>

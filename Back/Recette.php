@@ -43,10 +43,12 @@ class Recette{
         $nom = htmlspecialchars($recette["nom"]);
         $description = htmlspecialchars($recette["texte"]);
         echo '<div class="card">
-                <div class="adminButton">
-                    <button class="ModifRecette btn-outline-warning">Modifier</button>
-                    <button class="DeleteRecette btn-outline-danger">Supprimer</button>
-
+                <div class="adminButton">';
+        if(isset($_SESSION['nickname'])){
+            echo '<button class="ModifRecette btn-outline-warning">Modifier</button>
+                    <button class="DeleteRecette btn-outline-danger">Supprimer</button>';
+        }
+        echo'       
                 </div>
                 <!-- LIGNE HAUTE -->
                 <div class="card__top">
@@ -71,9 +73,11 @@ class Recette{
                 <div class="card__desc">
                     <h3>Description</h3>
                     <p>' . $description . '</p>
-                </div>
-                <h6 class="IdRecette">' . $id . '</h6>
-            </div>';
+                </div>';
+        if(isset($_SESSION['nickname'])){
+            echo '<h6 class="IdRecette">' . $id . '</h6>';
+        }
+        echo '</div>';
     }
 
 }

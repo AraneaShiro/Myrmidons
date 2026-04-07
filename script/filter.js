@@ -152,25 +152,20 @@ document.addEventListener('DOMContentLoaded', function () {
         let searchValue = searchBar.value.trim()
         let url = "../Back/index.php"
         let params = []
-
-        //-----------Recupération des parametres----------------
+ 
+        //-----------Récupération des paramètres----------------
         if (searchValue !== "") {
-            params.push("search=" + encodeURIComponent(searchValue)) 
+            params.push("search=" + encodeURIComponent(searchValue))
         }
-
-        params.push("ingredients=" + encodeURIComponent(tabIng.join(",")))
-        params.push("tags="        + encodeURIComponent(tabTag.join(",")))
-
-        //-----------Fetch----------------
-        fetch(url + "?" + params.join("&"), { method: 'GET' })
-            .then(response => {
-                if (response.ok) {
-                    console.log("Recherche ok")
-                }
-            })
-            .catch(error => {
-                console.error("Erreur avec le fetch :", error)
-            })
+        if (tabIng.length > 0) {
+            params.push("ingredients=" + encodeURIComponent(tabIng.join(",")))
+        }
+        if (tabTag.length > 0) {
+            params.push("tags=" + encodeURIComponent(tabTag.join(",")))
+        }
+ 
+        //-----------Redirection GET----------------
+        window.location.href = url + (params.length > 0 ? "?" + params.join("&") : "")
     }
 
     searchButton.addEventListener("click", searchRecettes) 

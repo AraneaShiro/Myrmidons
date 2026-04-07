@@ -63,11 +63,11 @@ class AddContent
 
     public function addTag($tag)
     {
-        if ($tag != "") {
+        if (!empty($tag)) {
             $this->db->ajouterTag($tag);
-        } else {
-            echo "<div id='error'>Tag vide !</div>";
+            return ['succes' => true, 'message' => 'Tag ajouté'];
         }
+        return ['succes' => false, 'message' => 'Tag vide !'];
     }
 
     // fonction pour supprimer un tag de la base de données
@@ -84,27 +84,18 @@ class AddContent
     // fonction pour ajouter un ingredient à la base de données
     public function addIngredient($ingredient, $photo = '')
     {
-        if (!empty($ingredient)) {
-            if (empty($photo)) {
-                return ['succes' => false, 'message' => 'Photo de l\'ingrédient manquante !'];
-            }
-            $this->db->ajouterIngredient($ingredient);
-            if (!empty($photo)) {
-                $ing = $this->db->rechercherIngredientAll();
-                foreach ($ing as $i) {
-                    if ($i['nom'] === $ingredient) {
-                        $this->db->modifierIngredient($i['ingredientID'], $ingredient, $photo);
-                        break;
-                    }
-                }
-            }
-            return ['succes' => true, 'message' => 'Ingrédient ajouté'];
+        if (empty($ingredient)) {
+            return ['succes' => false, 'message' => 'Ingrédient vide !'];
         }
-        return ['succes' => false, 'message' => 'Ingrédient vide !'];
+        if (empty($photo)) {
+            return ['succes' => false, 'message' => 'Photo de l\'ingrédient manquante !'];
+        }
+        $this->db->ajouterIngredient($ingredient, $photo);
+        return ['succes' => true, 'message' => 'Ingrédient ajouté'];
     }
 
     // fonction pour ajouter une recette à la base de données
-    public function addRecette($nom, $texte, $photo = '')
+    public function addRecette($nom, $texte, $photo = '', $tags = [], $ingredients = [])
     {
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
@@ -115,25 +106,76 @@ class AddContent
         if (empty($photo)) {
             return ['succes' => false, 'message' => 'Photo de la recette manquante !'];
         }
-        $this->db->ajouterRecette($nom, $texte, $photo);
+        
+        // insertion et récupération de l'ID de la nouvelle recette
+        $newId = $this->db->ajouterRecette($nom, $texte, $photo);
+
+        // liaison des tags
+        foreach ($tags as $tagNom) {
+            $tagNom = trim($tagNom);
+            if ($tagNom != "") {
+                $this->db->lierRecetteTag(intval($newId), $tagNom);
+            }
+        }
+
+        // liaison des ingrédients
+        $tousIngredients = $this->db->rechercherIngredientAll();
+        foreach ($ingredients as $ingNom) {
+            $ingNom = trim($ingNom);
+            if ($ingNom != "") {
+                foreach ($tousIngredients as $i) {
+                    // comparaison avec == pour être moins stricte
+                    if ($i['nom'] == $ingNom) {
+                        $this->db->lierRecetteIngredient(intval($newId), intval($i['ingredientID']));
+                        break;
+                    }
+                }
+            }
+        }
+
         return ['succes' => true, 'message' => 'Recette ajoutée'];
     }
 
     // fonction pour modifier une recette existante dans la base de données
-    public function modifierRecette($id, $nom, $texte, $photo, $ingredient, $tags)
+    public function modifierRecette($id, $nom, $texte, $photo, $tags, $ingredients)
     {
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
+        
+        // Si aucune nouvelle photo uploadée, on garde l'ancienne
+        if (empty($photo)) {
+            $recetteActuelle = $this->db->rechercherRecetteParID(intval($id));
+            $photo = $recetteActuelle['photo'];
+        }
+        
         $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
-        foreach ($tags as $tag) {
-            $tagid = $tag['nom'];
-            $this->db->lierRecetteTag($id, $tagid);
+        
+        // On supprime toutes les liaisons existantes avant de re-lier
+        $this->db->delierToutesLesLiaisonsRecette(intval($id));
+        
+        // liaison des tags
+        foreach ($tags as $tagNom) {
+            $tagNom = trim($tagNom);
+            if ($tagNom != "") {
+                $this->db->lierRecetteTag(intval($id), $tagNom);
+            }
         }
-        foreach ($ingredient as $ing) {
-            $ingid = $ing['ingredientID'];
-            $this->db->lierRecetteIngredient($id, $ingid);
+        
+        // liaison des ingrédients
+        $tousIngredients = $this->db->rechercherIngredientAll();
+        foreach ($ingredients as $ingNom) {
+            $ingNom = trim($ingNom);
+            if ($ingNom != "") {
+                foreach ($tousIngredients as $i) {
+                    if ($i['nom'] == $ingNom) {
+                        $this->db->lierRecetteIngredient(intval($id), intval($i['ingredientID']));
+                        break;
+                    }
+                }
+            }
         }
+        
         return ['succes' => true, 'message' => 'Recette modifiée'];
     }
 
@@ -154,12 +196,12 @@ class AddContent
         if (!empty($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] == 0) {
             $file = $_FILES[$fileKey];
             $dirImg = "../image/";
-            if (!is_dir($dirImg))
-                mkdir($dirImg); // crée le dossier si besoin
-            $nomFichier = basename($file['name']); // sécurise le nom
+            if (!is_dir($dirImg)) mkdir($dirImg);
+            $nomFichier = basename($file['name']);
             move_uploaded_file($file['tmp_name'], $dirImg . $nomFichier);
-            return $nomFichier;
+            return $dirImg . $nomFichier;
         }
+        return '';
     }
 
     //Fonction qui genere l'input de l image pour la recette
@@ -256,7 +298,7 @@ class AddContent
                 </div>';
     }
 
-    //     // fonction qui genere le formulaire de creation d'une recette
+    // fonction qui genere le formulaire de creation d'une recette
 
     public function generateRecetteAddForm()
     {
