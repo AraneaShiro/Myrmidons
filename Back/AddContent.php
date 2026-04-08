@@ -106,7 +106,7 @@ class AddContent
         if (empty($photo)) {
             return ['succes' => false, 'message' => 'Photo de la recette manquante !'];
         }
-        
+
         // insertion et récupération de l'ID de la nouvelle recette
         $newId = $this->db->ajouterRecette($nom, $texte, $photo);
 
@@ -142,18 +142,18 @@ class AddContent
         if (empty($nom)) {
             return ['succes' => false, 'message' => 'Nom de recette vide !'];
         }
-        
+
         // Si aucune nouvelle photo uploadée, on garde l'ancienne
         if (empty($photo)) {
             $recetteActuelle = $this->db->rechercherRecetteParID(intval($id));
             $photo = $recetteActuelle['photo'];
         }
-        
+
         $this->db->modifierRecette(intval($id), $nom, $texte, $photo);
-        
+
         // On supprime toutes les liaisons existantes avant de re-lier
         $this->db->delierToutesLesLiaisonsRecette(intval($id));
-        
+
         // liaison des tags
         foreach ($tags as $tagNom) {
             $tagNom = trim($tagNom);
@@ -161,7 +161,7 @@ class AddContent
                 $this->db->lierRecetteTag(intval($id), $tagNom);
             }
         }
-        
+
         // liaison des ingrédients
         $tousIngredients = $this->db->rechercherIngredientAll();
         foreach ($ingredients as $ingNom) {
@@ -175,7 +175,7 @@ class AddContent
                 }
             }
         }
-        
+
         return ['succes' => true, 'message' => 'Recette modifiée'];
     }
 
@@ -196,7 +196,8 @@ class AddContent
         if (!empty($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] == 0) {
             $file = $_FILES[$fileKey];
             $dirImg = "../image/";
-            if (!is_dir($dirImg)) mkdir($dirImg);
+            if (!is_dir($dirImg))
+                mkdir($dirImg);
             $nomFichier = basename($file['name']);
             move_uploaded_file($file['tmp_name'], $dirImg . $nomFichier);
             return $dirImg . $nomFichier;
@@ -234,7 +235,7 @@ class AddContent
         $tags = $this->db->rechercherTagAll();
         echo '<label>Tags</label>
                 <div class="tags-row" id="tagsRow">
-                    <span>Aucun tag ajouté</span>
+                    
                 </div>
                 <div class="customDropdownWrapper">
                     <input
