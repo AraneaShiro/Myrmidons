@@ -342,7 +342,7 @@ class SQLfct
             $statement->bindValue(':photo', $photoRecette);
 
             $statement->execute();
-
+            return $this->pdo->lastInsertId();
         } catch (\Exception $ex) {
             die("Erreur insertion recette : " . $ex->getMessage());
         }

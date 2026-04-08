@@ -245,7 +245,7 @@ class AddContent
                         autocomplete="off"
                     >
                     <ul id="tagInputList" class="dropdownList">
-                        <li data-value="test">test</li>';
+                       ';
         foreach ($tags as $tag) {
             $nom = htmlspecialchars($tag['nom']);
 
@@ -274,7 +274,7 @@ class AddContent
                 autocomplete="off"
             >
             <ul id="ingSelectList" class="dropdownList">
-                <li data-value="test">test</li>';
+                ';
         foreach ($ingredients as $ingredient) {
             $nom = htmlspecialchars($ingredient['nom']);
 
